@@ -1,0 +1,66 @@
+//
+//  Options.swift
+//
+//
+//  Created by Thomas Durand on 23/01/2022.
+//  Copyright © 2022 Padlok. All rights reserved.
+//
+
+import Require
+import Vapor
+
+struct Options: Content {
+    struct URLs: Content {
+        let appstore: URL
+        let marketing: URL
+        let privacy: URL
+        let support: URL
+        let terms: URL
+        let twitter: URL
+
+        static func adapted(for language: Language) -> URLs {
+            let twitter: URL = "https://twitter.com/PadlokApp"
+            switch language {
+            case .english:
+                return .init(
+                    appstore: "https://apps.apple.com/us/app/padlok/id1546719801",
+                    marketing: "https://padlok.app",
+                    privacy: "https://padlok.app/privacy",
+                    support: "https://padlok.app/support",
+                    terms: "https://padlok.app/terms",
+                    twitter: twitter
+                )
+            case .french:
+                return .init(
+                    appstore: "https://apps.apple.com/fr/app/padlok/id1546719801",
+                    marketing: "https://padlok.app/fr",
+                    privacy: "https://padlok.app/fr/confidentialite",
+                    support: "https://padlok.app/fr/assistance",
+                    terms: "https://padlok.app/fr/conditions",
+                    twitter: twitter
+                )
+            }
+        }
+    }
+
+    /// An arbitrary version number to provide information regarding the API ; like when deprecating stuff
+    let apiVersion: String
+    /// Sentry traces sample rate, to increase or decrease the number of events reported to Sentry API
+    let tracesSampleRate: Double
+    /// URLs used by the application for different subset of the application
+    let urls: URLs
+
+    static func adapted(for language: Language) -> Options {
+        Options(
+            apiVersion: "2.0.0",
+            tracesSampleRate: 0.5,
+            urls: .adapted(for: language)
+        )
+    }
+}
+
+extension URL: ExpressibleByStringLiteral {
+    public init(stringLiteral value: StaticString) {
+        self = URL(string: "\(value)").require(hint: "Invalid URL string literal: \(value)")
+    }
+}

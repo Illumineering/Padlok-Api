@@ -1,3 +1,11 @@
+//
+//  main.swift
+//
+//
+//  Created by Thomas Durand on 22/01/2022.
+//  Copyright © 2022 Padlok. All rights reserved.
+//
+
 import App
 import Vapor
 
