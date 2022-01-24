@@ -28,21 +28,10 @@ struct Feedback: Content {
             throw Abort(.badRequest, reason: "Non-empty value required for key 'message'")
         }
 
-        if email != nil && !isEmailValid {
+        // TODO: email here is not correctly checked against
+        if let email = email, Validator.email.validate(email).isFailure {
             throw Abort(.badRequest, reason: "Entered email is not a valid email")
         }
-    }
-
-    var isEmailValid: Bool {
-        guard let email = email?.trimmingCharacters(in: .whitespacesAndNewlines) else {
-            return false
-        }
-        guard let dataDetector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) else {
-            return false
-        }
-        let range = NSMakeRange(0, NSString(string: email).length)
-        let allMatches = dataDetector.matches(in: email, options: [], range: range)
-        return allMatches.count == 1 && allMatches.first?.url?.absoluteString.contains("mailto:") == true
     }
 }
 
