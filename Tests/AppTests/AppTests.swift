@@ -47,9 +47,34 @@ final class AppTests: XCTestCase {
         defer { app.shutdown() }
         try configure(app)
 
-        try app.test(.OPTIONS, "", afterResponse: { res in
-            // TODO: test a bit more
+        // Default to english
+        try app.test(.OPTIONS, "", afterResponse: { res throws in
             XCTAssertEqual(res.status, .ok)
+            XCTAssertTrue(res.headers.contains(name: .contentType))
+            XCTAssertEqual(res.headers.first(name: .contentType), "application/json; charset=utf-8")
+            let options = try res.content.decode(Options.self)
+            XCTAssertEqual(options, Options.adapted(for: .english))
         })
+
+        // When present, we go to the correct language
+        for (langcode, language) in [
+            "en-CA": Language.english,
+            "en-UK": .english,
+            "en-US": .english,
+            "fr-CA": .french,
+            "fr-FR": .french,
+            // Unsupported locales should default to english
+            "zh-Hans": .english,
+        ] {
+            try app.test(.OPTIONS, "", headers: [
+                HTTPHeaders.Name.acceptLanguage.description: langcode,
+            ], afterResponse: { res in
+                XCTAssertEqual(res.status, .ok)
+                XCTAssertTrue(res.headers.contains(name: .contentType))
+                XCTAssertEqual(res.headers.first(name: .contentType), "application/json; charset=utf-8")
+                let options = try res.content.decode(Options.self)
+                XCTAssertEqual(options, Options.adapted(for: language))
+            })
+        }
     }
 }

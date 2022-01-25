@@ -9,8 +9,8 @@
 import Require
 import Vapor
 
-struct Options: Content {
-    struct URLs: Content {
+struct Options: Content, Equatable {
+    struct URLs: Content, Equatable {
         let appstore: URL
         let marketing: URL
         let privacy: URL
