@@ -49,6 +49,6 @@ Message: \(message)
 
 extension Feedback {
     func save(in io: FileIO) throws {
-        try io.writeFile(ByteBuffer(string: self.description), at: "Data/\(UUID().uuidString).txt").wait()
+        io.writeFile(ByteBuffer(string: self.description), at: "Data/\(UUID().uuidString).txt")
     }
 }
