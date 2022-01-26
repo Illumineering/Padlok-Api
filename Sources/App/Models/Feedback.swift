@@ -35,9 +35,20 @@ struct Feedback: Content {
     }
 }
 
+extension Feedback: CustomStringConvertible {
+    var description: String {
+        return """
+Date: \(Date())
+Reason: \(reason)
+Language: \(language)
+Mail: \(email ?? "Unknown")
+Message: \(message)
+"""
+    }
+}
+
 extension Feedback {
-    func send() throws {
-        // TODO: find a way to deal with mails here
-        print(self)
+    func save(in io: FileIO) throws {
+        try io.writeFile(ByteBuffer(string: self.description), at: "Data/\(UUID().uuidString).txt").wait()
     }
 }

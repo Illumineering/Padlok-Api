@@ -9,6 +9,15 @@
 @testable import App
 import XCTVapor
 
+/// Structure of `ErrorMiddleware` default response.
+struct ErrorResponse: Codable, Equatable {
+    /// Always `true` to indicate this is a non-typical JSON response.
+    let error: Bool
+
+    /// The reason for the error.
+    let reason: String
+}
+
 final class AppTests: XCTestCase {
     func testRedirection() throws {
         let app = Application(.testing)
@@ -48,7 +57,7 @@ final class AppTests: XCTestCase {
         try configure(app)
 
         // Default to english
-        try app.test(.OPTIONS, "", afterResponse: { res throws in
+        try app.test(.OPTIONS, "", afterResponse: { res in
             XCTAssertEqual(res.status, .ok)
             XCTAssertTrue(res.headers.contains(name: .contentType))
             XCTAssertEqual(res.headers.first(name: .contentType), "application/json; charset=utf-8")
@@ -76,5 +85,134 @@ final class AppTests: XCTestCase {
                 XCTAssertEqual(options, Options.adapted(for: language))
             })
         }
+    }
+
+    func testFeedbackPost() throws {
+        let app = Application(.testing)
+        defer { app.shutdown() }
+        try configure(app)
+
+        // No body
+        try app.test(.POST, "feedback", afterResponse: { res in
+            XCTAssertEqual(res.status, .unsupportedMediaType)
+        })
+
+        // Bad body
+        try app.test(.POST, "feedback", beforeRequest: { req in
+            try req.content.encode(["bad": "content"])
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .badRequest)
+        })
+
+        // Missing required reason key
+        try app.test(.POST, "feedback", beforeRequest: { req in
+            try req.content.encode([
+                "language": "en",
+                "email": "test@test.fr",
+                "message": "a message",
+            ])
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .badRequest)
+            XCTAssertEqual(try res.content.decode(ErrorResponse.self), ErrorResponse(error: true, reason: "Value required for key \'reason\'."))
+        })
+
+        // Unsupported value for reason key
+        try app.test(.POST, "feedback", beforeRequest: { req in
+            try req.content.encode([
+                "reason": "hello, world!",
+                "language": "en",
+                "email": "test@test.fr",
+                "message": "a message",
+            ])
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .badRequest)
+            XCTAssertEqual(try res.content.decode(ErrorResponse.self), ErrorResponse(error: true, reason: "Cannot initialize Reason from invalid String value hello, world! for key reason"))
+        })
+
+        // Missing required language key
+        try app.test(.POST, "feedback", beforeRequest: { req in
+            try req.content.encode([
+                "reason": "other",
+                "email": "test@test.fr",
+                "message": "a message",
+            ])
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .badRequest)
+            XCTAssertEqual(try res.content.decode(ErrorResponse.self), ErrorResponse(error: true, reason: "Value required for key \'language\'."))
+        })
+
+        // Unsupported value for language key
+        try app.test(.POST, "feedback", beforeRequest: { req in
+            try req.content.encode([
+                "reason": "other",
+                "language": "zh",
+                "email": "test@test.fr",
+                "message": "a message",
+            ])
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .badRequest)
+            XCTAssertEqual(try res.content.decode(ErrorResponse.self), ErrorResponse(error: true, reason: "Cannot initialize Language from invalid String value zh for key language"))
+        })
+
+        // Missing required message key
+        try app.test(.POST, "feedback", beforeRequest: { req in
+            try req.content.encode([
+                "reason": "bug",
+                "language": "en",
+                "email": "test@test.fr"
+            ])
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .badRequest)
+            XCTAssertEqual(try res.content.decode(ErrorResponse.self), ErrorResponse(error: true, reason: "Value required for key \'message\'."))
+        })
+
+        // Empty message
+        try app.test(.POST, "feedback", beforeRequest: { req in
+            try req.content.encode([
+                "reason": "feature",
+                "language": "fr",
+                "email": "test@test.fr",
+                "message": ""
+            ])
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .badRequest)
+            XCTAssertEqual(try res.content.decode(ErrorResponse.self), ErrorResponse(error: true, reason: "Non-empty value required for key \'message\'"))
+        })
+
+        // Unvalid email
+        try app.test(.POST, "feedback", beforeRequest: { req in
+            try req.content.encode([
+                "reason": "other",
+                "language": "fr",
+                "email": "hello, world!",
+                "message": "Hi, there!"
+            ])
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .badRequest)
+            XCTAssertEqual(try res.content.decode(ErrorResponse.self), ErrorResponse(error: true, reason: "Entered email is not a valid email"))
+        })
+
+        // No email - valid
+        try app.test(.POST, "feedback", beforeRequest: { req in
+            try req.content.encode([
+                "reason": "feedback",
+                "language": "fr",
+                "message": "Hi, there!"
+            ])
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .ok)
+        })
+
+        // All keys, valid
+        try app.test(.POST, "feedback", beforeRequest: { req in
+            try req.content.encode([
+                "reason": "other",
+                "language": "en",
+                "email": "test@test.fr",
+                "message": "Hi, there!"
+            ])
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .ok)
+        })
     }
 }

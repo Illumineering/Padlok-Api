@@ -24,7 +24,9 @@ func routes(_ app: Application) throws {
     // Retreiving feedback from users
     app.post("feedback") { req throws -> Response in
         let feedback = try req.content.decode(Feedback.self)
-        try feedback.send()
+        if app.environment != .testing {
+            try feedback.save(in: req.fileio)
+        }
         guard let redirect = try? req.query.decode(Feedback.Redirect.self), redirect.redirect.hasPrefix("https://padlok.app/") else {
             return Response(status: .ok)
         }
