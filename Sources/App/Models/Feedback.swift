@@ -29,7 +29,7 @@ struct Feedback: Content {
         }
 
         // TODO: email here is not correctly checked against
-        if let email = email, Validator.email.validate(email).isFailure {
+        if let email = email, !email.isEmpty, Validator.email.validate(email).isFailure {
             throw Abort(.badRequest, reason: "Entered email is not a valid email")
         }
     }

@@ -203,6 +203,18 @@ final class AppTests: XCTestCase {
             XCTAssertEqual(res.status, .ok)
         })
 
+        // Empty email - valid
+        try app.test(.POST, "feedback", beforeRequest: { req in
+            try req.content.encode([
+                "reason": "feedback",
+                "language": "fr",
+                "email": "",
+                "message": "Hi, there!"
+            ])
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .ok)
+        })
+
         // All keys, valid
         try app.test(.POST, "feedback", beforeRequest: { req in
             try req.content.encode([
