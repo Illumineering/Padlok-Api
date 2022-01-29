@@ -24,14 +24,28 @@ func routes(_ app: Application) throws {
     // Retreiving feedback from users
     app.post("feedback") { req throws -> Response in
         let feedback = try req.content.decode(Feedback.self)
-        if app.environment != .testing {
-            try feedback.save(with: req.fileio, in: req.application.directory)
+        if app.environment.shouldWriteFile {
+            let path = req.application.directory.dataDirectory + UUID().uuidString + ".txt"
+            try feedback.description.write(toFile: path, atomically: true, encoding: .utf8)
         }
+        // Redirect users when there is one provided ; used by the front
         guard let redirect = try? req.query.decode(Feedback.Redirect.self), redirect.redirect.hasPrefix("https://padlok.app/") else {
+            // Otherwise, a simple 200 status will be enough
             return Response(status: .ok)
         }
         return Response(status: .found, headers: [
             HTTPHeaders.Name.location.description: redirect.redirect
         ])
+    }
+}
+
+extension Environment {
+    var shouldWriteFile: Bool {
+        switch self {
+        case .testing:
+            return false
+        default:
+            return true
+        }
     }
 }

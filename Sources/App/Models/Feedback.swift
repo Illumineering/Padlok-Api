@@ -47,12 +47,6 @@ Message: \(message)
     }
 }
 
-extension Feedback {
-    func save(with io: FileIO, in directory: DirectoryConfiguration) throws {
-        io.writeFile(ByteBuffer(string: self.description), at: directory.dataDirectory +  UUID().uuidString + ".txt")
-    }
-}
-
 extension DirectoryConfiguration {
     var dataDirectory: String {
         self.workingDirectory + "Data/"
