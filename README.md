@@ -9,7 +9,7 @@ Even when sharing an address and codes, the api is designed to retreive encrypte
 
 ## Technologies
 
-Padlok-API is built using [Vapor][https://vapor.codes], and Swift. It is compatible with latest Ubuntu as well with MacOS builds.
+Padlok-API is built using [Vapor](https://vapor.codes), and Swift. It is compatible with latest Ubuntu as well with MacOS builds.
 
 ## Tests
 
