@@ -8,6 +8,23 @@
 
 import Vapor
 
+extension DirectoryConfiguration {
+    var dataDirectory: String {
+        self.workingDirectory + "Data/"
+    }
+}
+
+extension Environment {
+    var shouldWriteFile: Bool {
+        switch self {
+        case .testing:
+            return false
+        default:
+            return true
+        }
+    }
+}
+
 // configures your application
 public func configure(_ app: Application) throws {
     // register routes

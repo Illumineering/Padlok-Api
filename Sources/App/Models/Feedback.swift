@@ -46,9 +46,3 @@ Message: \(message)
 """
     }
 }
-
-extension DirectoryConfiguration {
-    var dataDirectory: String {
-        self.workingDirectory + "Data/"
-    }
-}
