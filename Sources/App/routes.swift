@@ -23,4 +23,7 @@ func routes(_ app: Application) throws {
 
     // Retreiving feedback from users
     try app.register(collection: FeedbackController())
+
+    // Share & retreive shared data
+    try app.register(collection: ShareController())
 }

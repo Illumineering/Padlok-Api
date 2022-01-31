@@ -6,6 +6,7 @@
 //  Copyright © 2022 Padlok. All rights reserved.
 //
 
+@testable import PadlokShare
 @testable import App
 import XCTVapor
 
@@ -226,5 +227,64 @@ final class AppTests: XCTestCase {
         }, afterResponse: { res in
             XCTAssertEqual(res.status, .ok)
         })
+    }
+
+    func testShareFeature() throws {
+        let app = Application(.testing)
+        defer { app.shutdown() }
+        try configure(app)
+
+        // Post a building to be shared
+        var output: SealedShare.Output?
+        try app.test(.POST, "share", beforeRequest: { req in
+            try req.content.encode([
+                "key": "HGp4M0KDdFKJg4U+BM5LvxNrUps+F8PraN+oe6PTWB8=",
+                "sealed": "49Gyk7tk5/qUnOrHW/p6l93r208MkKg7nGrj4mBha3J3+J3+eQp8PDuL2MnSjMX63pxHHI00dQPgTaT7NmL1IAhq8JKS6W7GJ1uutGiOwIuhQ+pMkHaG8CdOXwtMhFDYTtQBwVvlo4+e3jMZQHVZRrMqPJUJ6iEUvLNRu4pqrsuCLvgFYbRIXAsbpqAdxIstRq8EP3UWHwPhwcJVj3S1p+q2ZyjMSW3gSjweWMbhgtTwHt2Jb4VL64dXzZs97lo7VvZPGPnfRPCeCMISTYLLyX4HyBsCTmMgF9u6WMbV+9bt/eAgOHi4P7MZc2zDqrsSQ/sBusoz0nmFm+hqHI/ZW/hq642PQtgEby6Taoqz9DxSvnf1mVCOKVW+itFFhejS7hA+cCWMSFZi3ji2QcxZabzOUNau08xxyr0c+79cqXXod0e2pqk+2t/TTIoi/XaoXapLu/EbVnQwB5kvqQtyQR1qO59yDmBghYvMcpZXnk/yS0rm1DPqbWpJXOe6otFjbuDYqRIL1KI9stM+JrUVSgNe6185w0IzmqJuDmQw45VTSx9daiQqPM+jfdolNpA6l4p9JRIIr+jUKO3qdyMXF2FjLy4yTdhlMLel60+4R28VRzMu57zdx2t7frfmKhbW0FRQvPm3hGuyXiTJ5unT29DEDZ1HqsaaMqpdtB6INm4=",
+            ])
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .ok)
+            output = try res.content.decode(SealedShare.Output.self)
+        })
+
+        // Try to get this building data now
+        if let output = output {
+            // Test with correct passphrase
+            try app.test(.GET, "shared/\(output.identifier)/DV9LX4CCoW2Y") { res in
+                XCTAssertEqual(res.status, .ok)
+                do {
+                    let building = try res.content.decode(Models.Building.self)
+                    XCTAssertEqual(building.address, "55 de la rue du Faubourg-Saint-Honoré")
+                    XCTAssertEqual(building.coordinates.latitude, 48.869978342034287)
+                    XCTAssertEqual(building.coordinates.longitude, 2.3165022395478303)
+                    XCTAssertEqual(building.building, "Principal")
+                    XCTAssertEqual(building.intercom, "M. le Président")
+                    XCTAssertEqual(building.staircase, "Principal")
+                    XCTAssertEqual(building.floor, 1)
+                    XCTAssertEqual(building.doors.count, 4)
+                    XCTAssertEqual(building.doors[0].label, .door)
+                    XCTAssertEqual(building.doors[1].label, .gate)
+                    XCTAssertEqual(building.doors[2].label, .portal)
+                    XCTAssertEqual(building.doors[3].label, .custom(string: "Porte Jupiter"))
+                    XCTAssertEqual(building.doors[0].code, "AB23C")
+                    XCTAssertEqual(building.doors[1].code, "P12BD")
+                    XCTAssertEqual(building.doors[2].code, "GUARD")
+                    XCTAssertEqual(building.doors[3].code, "19B29B02")
+                } catch {
+                    XCTFail("Data should be decoded as building.")
+                }
+            }
+
+            // Test with incorrect passphrase
+            try app.test(.GET, "shared/\(output.identifier)/abcdefghijkl") { res in
+                XCTAssertEqual(res.status, .notFound)
+            }
+        } else {
+            XCTFail("Could not get output from previous test")
+        }
+
+        // Test with unknown identifier passphrase
+        try app.test(.GET, "shared/\(try UUID().shortened())/abcdefghijkl") { res in
+            XCTAssertEqual(res.status, .notFound)
+        }
     }
 }
