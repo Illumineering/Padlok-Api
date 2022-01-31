@@ -7,6 +7,7 @@
 
 import Fluent
 import Vapor
+import UUIDShortener
 
 final class SealedShare: Model {
     static let schema = "sealed_shares"
@@ -38,16 +39,6 @@ final class SealedShare: Model {
 
     func output() throws -> Output {
         let identifier = try self.requireID()
-        return Output(identifier: try identifier.shortened())
-    }
-}
-
-extension UUID {
-    func shortened() throws -> String {
-        return uuidString // TODO
-    }
-
-    init?(shortened: String) {
-        self.init(uuidString: shortened) // TODO!
+        return Output(identifier: try identifier.shortened(using: .base62))
     }
 }

@@ -227,6 +227,15 @@
         }
       },
       {
+        "package": "UUIDShortener",
+        "repositoryURL": "https://github.com/Dean151/UUIDShortener",
+        "state": {
+          "branch": null,
+          "revision": "ef43dc9e72b6b1f39166175b7bd6a86c34e4bd14",
+          "version": "1.0.0"
+        }
+      },
+      {
         "package": "vapor",
         "repositoryURL": "https://github.com/vapor/vapor.git",
         "state": {

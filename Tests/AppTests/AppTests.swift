@@ -248,6 +248,18 @@ final class AppTests: XCTestCase {
 
         // Try to get this building data now
         if let output = output {
+            // Test without passphrase
+            try app.test(.GET, "shared/\(output.identifier)") { res in
+                XCTAssertEqual(res.status, .ok)
+                do {
+                    let infos = try res.content.decode(SealedShare.Infos.self)
+                    XCTAssertEqual(infos.key.base64EncodedString(), "HGp4M0KDdFKJg4U+BM5LvxNrUps+F8PraN+oe6PTWB8=")
+                    XCTAssertEqual(infos.sealed.base64EncodedString(), "49Gyk7tk5/qUnOrHW/p6l93r208MkKg7nGrj4mBha3J3+J3+eQp8PDuL2MnSjMX63pxHHI00dQPgTaT7NmL1IAhq8JKS6W7GJ1uutGiOwIuhQ+pMkHaG8CdOXwtMhFDYTtQBwVvlo4+e3jMZQHVZRrMqPJUJ6iEUvLNRu4pqrsuCLvgFYbRIXAsbpqAdxIstRq8EP3UWHwPhwcJVj3S1p+q2ZyjMSW3gSjweWMbhgtTwHt2Jb4VL64dXzZs97lo7VvZPGPnfRPCeCMISTYLLyX4HyBsCTmMgF9u6WMbV+9bt/eAgOHi4P7MZc2zDqrsSQ/sBusoz0nmFm+hqHI/ZW/hq642PQtgEby6Taoqz9DxSvnf1mVCOKVW+itFFhejS7hA+cCWMSFZi3ji2QcxZabzOUNau08xxyr0c+79cqXXod0e2pqk+2t/TTIoi/XaoXapLu/EbVnQwB5kvqQtyQR1qO59yDmBghYvMcpZXnk/yS0rm1DPqbWpJXOe6otFjbuDYqRIL1KI9stM+JrUVSgNe6185w0IzmqJuDmQw45VTSx9daiQqPM+jfdolNpA6l4p9JRIIr+jUKO3qdyMXF2FjLy4yTdhlMLel60+4R28VRzMu57zdx2t7frfmKhbW0FRQvPm3hGuyXiTJ5unT29DEDZ1HqsaaMqpdtB6INm4=")
+                } catch {
+                    XCTFail("Data should be decoded as SealedShare.Infos.")
+                }
+            }
+
             // Test with correct passphrase
             try app.test(.GET, "shared/\(output.identifier)/DV9LX4CCoW2Y") { res in
                 XCTAssertEqual(res.status, .ok)
@@ -270,7 +282,7 @@ final class AppTests: XCTestCase {
                     XCTAssertEqual(building.doors[2].code, "GUARD")
                     XCTAssertEqual(building.doors[3].code, "19B29B02")
                 } catch {
-                    XCTFail("Data should be decoded as building.")
+                    XCTFail("Data should be decoded as Models.Building.")
                 }
             }
 
@@ -282,8 +294,13 @@ final class AppTests: XCTestCase {
             XCTFail("Could not get output from previous test")
         }
 
-        // Test with unknown identifier passphrase
-        try app.test(.GET, "shared/\(try UUID().shortened())/abcdefghijkl") { res in
+        // Test with unknown identifier
+        try app.test(.GET, "shared/\(try UUID().shortened(using: .base62))") { res in
+            XCTAssertEqual(res.status, .notFound)
+        }
+
+        // Test with unknown identifier
+        try app.test(.GET, "shared/\(try UUID().shortened(using: .base62))/abcdefghijkl") { res in
             XCTAssertEqual(res.status, .notFound)
         }
     }

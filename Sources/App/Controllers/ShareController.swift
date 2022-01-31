@@ -6,25 +6,34 @@
 //
 
 import PadlokShare
+import UUIDShortener
 import Vapor
 
 struct ShareController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
-        routes.get("shared", ":identifier", ":passphrase", use: decodeSharedInfos)
+        routes.get("shared", ":identifier", use: decodeSharedInfos)
+        // FIXME: Maybe this will be not necessary, preventing the back-end from ever decrypting the infos is better
+        routes.get("shared", ":identifier", ":passphrase", use: decryptSharedInfos)
         routes.post("share", use: encodeSharedInfos)
     }
 
-    private func decodeSharedInfos(req: Request) throws -> some ResponseEncodable {
-        guard let shortIdentifier = req.parameters.get("identifier"), let identifier = UUID(shortened: shortIdentifier) else {
+    private func decodeSharedInfos(req: Request) throws -> EventLoopFuture<SealedShare.Infos> {
+        guard let shortIdentifier = req.parameters.get("identifier"),
+              let identifier = try? UUID(shortened: shortIdentifier, using: .base62) else {
             throw Abort(.badRequest, reason: "Missing or unparsable identifier")
-        }
-        guard let passphrase = req.parameters.get("passphrase") else {
-            throw Abort(.badRequest, reason: "Missing passphrase")
         }
         return SealedShare.find(identifier, on: req.db)
             .unwrap(or: Abort(.notFound))
-            .flatMapThrowing({ sealedShare throws -> Models.Building in
-                let infos = sealedShare.infos
+            .map({ $0.infos })
+    }
+
+    // FIXME: Maybe this will be not necessary, preventing the back-end from ever decrypting the infos is better
+    private func decryptSharedInfos(req: Request) throws -> EventLoopFuture<Models.Building> {
+        guard let passphrase = req.parameters.get("passphrase") else {
+            throw Abort(.badRequest, reason: "Missing passphrase")
+        }
+        return try decodeSharedInfos(req: req)
+            .flatMapThrowing({ infos throws -> Models.Building in
                 do {
                     return try Crypto.open(.init(combined: infos.sealed), using: .init(data: infos.key), and: passphrase)
                 } catch {
@@ -33,7 +42,7 @@ struct ShareController: RouteCollection {
             })
     }
 
-    private func encodeSharedInfos(req: Request) throws -> some ResponseEncodable {
+    private func encodeSharedInfos(req: Request) throws -> EventLoopFuture<SealedShare.Output> {
         let infos = try req.content.decode(SealedShare.Infos.self)
         let sealedShare = SealedShare(infos: infos)
         return sealedShare.create(on: req.db).flatMapThrowing { try sealedShare.output() }
