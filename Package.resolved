@@ -93,10 +93,10 @@
       },
       {
         "package": "PadlokShare",
-        "repositoryURL": "https://github.com/Dean151/PadlokShare",
+        "repositoryURL": "https://github.com/Dean151/padlok-sharekit",
         "state": {
           "branch": "main",
-          "revision": "a88e3ba076a6891eed2acccff4e1904dae5311b3",
+          "revision": "10caf46debbc4800c119d55cfe549ed0aad47d89",
           "version": null
         }
       },
@@ -228,7 +228,7 @@
       },
       {
         "package": "UUIDShortener",
-        "repositoryURL": "https://github.com/Dean151/UUIDShortener",
+        "repositoryURL": "https://github.com/Dean151/uuid-shortener",
         "state": {
           "branch": null,
           "revision": "ef43dc9e72b6b1f39166175b7bd6a86c34e4bd14",
