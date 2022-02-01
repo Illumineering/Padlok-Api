@@ -21,6 +21,18 @@ swift test
 
 Plus, those tests are runned on push automatically using Github Workflows
 
+## Configuration
+
+By default, storage will be in-memory.
+To use MySQL instead, copy environment file and update it:
+
+```
+cp example.env .env.production
+vim .env.production
+```
+
+Possible also to configure a `.env.development` file for testing on server
+
 ## Build
 
 For debugging:

@@ -32,18 +32,19 @@ extension Environment {
 // configures your application
 public func configure(_ app: Application) throws {
     // register database
-    switch app.environment {
-    case .testing:
-        // In-memory for testing :)
-        app.databases.use(.sqlite(), as: .sqlite)
-    default:
+    if let username = Environment.get("DATABASE_USERNAME"),
+        let password = Environment.get("DATABASE_PASSWORD"),
+        let database = Environment.get("DATABASE_NAME") {
         app.databases.use(.mysql(
             hostname: Environment.get("DATABASE_HOST") ?? "localhost",
             port: Environment.get("DATABASE_PORT").flatMap(Int.init(_:)) ?? MySQLConfiguration.ianaPortNumber,
-            username: Environment.get("DATABASE_USERNAME") ?? "vapor_username",
-            password: Environment.get("DATABASE_PASSWORD") ?? "vapor_password",
-            database: Environment.get("DATABASE_NAME") ?? "vapor_database"
+            username: username,
+            password: password,
+            database: database
         ), as: .mysql)
+    } else {
+        // In-memory for testing :)
+        app.databases.use(.sqlite(), as: .sqlite)
     }
 
     // Perform migrations
