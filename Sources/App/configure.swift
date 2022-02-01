@@ -33,7 +33,10 @@ extension Environment {
 public func configure(_ app: Application) throws {
     // register database
     switch app.environment {
-    case .production:
+    case .testing:
+        // In-memory for testing :)
+        app.databases.use(.sqlite(), as: .sqlite)
+    default:
         app.databases.use(.mysql(
             hostname: Environment.get("DATABASE_HOST") ?? "localhost",
             port: Environment.get("DATABASE_PORT").flatMap(Int.init(_:)) ?? MySQLConfiguration.ianaPortNumber,
@@ -41,8 +44,6 @@ public func configure(_ app: Application) throws {
             password: Environment.get("DATABASE_PASSWORD") ?? "vapor_password",
             database: Environment.get("DATABASE_NAME") ?? "vapor_database"
         ), as: .mysql)
-    default:
-        app.databases.use(.sqlite(), as: .sqlite)
     }
 
     // Perform migrations
