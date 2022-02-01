@@ -35,6 +35,7 @@ public func configure(_ app: Application) throws {
     if let username = Environment.get("DATABASE_USERNAME"),
         let password = Environment.get("DATABASE_PASSWORD"),
         let database = Environment.get("DATABASE_NAME") {
+        app.logger.info("Attempting to connect to MySQL using user \(username), and database \(database)", metadata: .none)
         app.databases.use(.mysql(
             hostname: Environment.get("DATABASE_HOST") ?? "localhost",
             port: Environment.get("DATABASE_PORT").flatMap(Int.init(_:)) ?? MySQLConfiguration.ianaPortNumber,
@@ -44,6 +45,7 @@ public func configure(_ app: Application) throws {
         ), as: .mysql)
     } else {
         // In-memory for testing :)
+        app.logger.info("Using in-memory storage", metadata: .none)
         app.databases.use(.sqlite(), as: .sqlite)
     }
 
