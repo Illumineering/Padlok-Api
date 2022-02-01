@@ -24,17 +24,25 @@ final class SealedShare: Model {
     @ID(key: .id)
     var id: UUID?
 
-    @Field(key: "infos")
-    var infos: Infos
+    @Field(key: "sealed")
+    var sealed: Data
+
+    @Field(key: "key")
+    var key: Data
 
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
+
+    var infos: Infos {
+        .init(sealed: sealed, key: key)
+    }
 
     init() {}
 
     init(id: UUID? = nil, infos: Infos) {
         self.id = id
-        self.infos = infos
+        self.sealed = infos.sealed
+        self.key = infos.key
     }
 
     func output() throws -> Output {
