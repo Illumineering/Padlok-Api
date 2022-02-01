@@ -35,13 +35,16 @@ public func configure(_ app: Application) throws {
     if let username = Environment.get("DATABASE_USERNAME"),
         let password = Environment.get("DATABASE_PASSWORD"),
         let database = Environment.get("DATABASE_NAME") {
+        var tls = TLSConfiguration.makeClientConfiguration()
+        tls.certificateVerification = .none
         app.logger.info("Attempting to connect to MySQL using user \(username), and database \(database)", metadata: .none)
         app.databases.use(.mysql(
             hostname: Environment.get("DATABASE_HOST") ?? "localhost",
             port: Environment.get("DATABASE_PORT").flatMap(Int.init(_:)) ?? MySQLConfiguration.ianaPortNumber,
             username: username,
             password: password,
-            database: database
+            database: database,
+            tlsConfiguration: tls
         ), as: .mysql)
     } else {
         // In-memory for testing :)
