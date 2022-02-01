@@ -24,7 +24,10 @@ struct ShareController: RouteCollection {
         }
         return SealedShare.find(identifier, on: req.db)
             .unwrap(or: Abort(.notFound))
-            .map({ $0.infos })
+            .map {
+                req.logger.debug("SealedShare found", metadata: .none)
+                return $0.infos
+            }
     }
 
     // FIXME: Maybe this will be not necessary, preventing the back-end from ever decrypting the infos is better
