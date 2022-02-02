@@ -6,12 +6,13 @@
 //
 
 import Fluent
+import FluentSQL
 
 struct CreateSealedShare: Migration {
     func prepare(on database: Database) -> EventLoopFuture<Void> {
         return database.schema("sealed_shares")
             .id()
-            .field("sealed", .string, .required)
+            .field("sealed", .custom(SQLRaw("TEXT")), .required)
             .field("key", .string, .required)
             .field("created_at", .datetime, .required)
             .create()
