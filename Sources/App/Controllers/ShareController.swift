@@ -38,7 +38,10 @@ struct ShareController: RouteCollection {
         return try decodeSharedInfos(req: req)
             .flatMapThrowing({ infos throws -> Models.Building in
                 do {
-                    return try Crypto.open(.init(combined: infos.sealed), using: .init(data: infos.key), and: passphrase)
+                    guard let sealed = Data(base64Encoded: infos.sealed), let key = Data(base64Encoded: infos.key) else {
+                        throw Abort(.notFound)
+                    }
+                    return try Crypto.open(.init(combined: sealed), using: .init(data: key), and: passphrase)
                 } catch {
                     throw Abort(.notFound)
                 }

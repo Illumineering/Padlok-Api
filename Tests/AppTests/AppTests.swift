@@ -256,8 +256,8 @@ final class AppTests: XCTestCase {
                 XCTAssertEqual(res.status, .ok)
                 do {
                     let infos = try res.content.decode(SealedShare.Infos.self)
-                    XCTAssertEqual(infos.key.base64EncodedString(), key)
-                    XCTAssertEqual(infos.sealed.base64EncodedString(), sealed)
+                    XCTAssertEqual(infos.key, key)
+                    XCTAssertEqual(infos.sealed, sealed)
                     let jsonString = try res.content.decode([String: String].self)
                     XCTAssertEqual(jsonString["key"], key)
                     XCTAssertEqual(jsonString["sealed"], sealed)

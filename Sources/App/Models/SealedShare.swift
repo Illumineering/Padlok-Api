@@ -13,8 +13,8 @@ final class SealedShare: Model {
     static let schema = "sealed_shares"
 
     struct Infos: Content {
-        let sealed: Data
-        let key: Data
+        let sealed: String
+        let key: String
     }
 
     struct Output: Content {
@@ -25,10 +25,10 @@ final class SealedShare: Model {
     var id: UUID?
 
     @Field(key: "sealed")
-    var sealed: Data
+    var sealed: String
 
     @Field(key: "key")
-    var key: Data
+    var key: String
 
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
