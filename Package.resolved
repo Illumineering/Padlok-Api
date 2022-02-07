@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/swift-server/async-http-client.git",
         "state": {
           "branch": null,
-          "revision": "70826d038d5bdc3142a386b735792d87ef7a5dfc",
-          "version": "1.8.1"
+          "revision": "cbf533073d9a5edfb16c266d14151f69137ba7c9",
+          "version": "1.8.2"
         }
       },
       {
@@ -26,6 +26,15 @@
           "branch": null,
           "revision": "75ea3b627d88221440b878e5dfccc73fd06842ed",
           "version": "4.2.7"
+        }
+      },
+      {
+        "package": "CryptoSwift",
+        "repositoryURL": "https://github.com/krzyzanowskim/CryptoSwift.git",
+        "state": {
+          "branch": null,
+          "revision": "12f2389aca4a07e0dd54c86ec23d0721ed88b8db",
+          "version": "1.4.3"
         }
       },
       {
@@ -96,7 +105,7 @@
         "repositoryURL": "https://github.com/Dean151/padlok-sharekit",
         "state": {
           "branch": "main",
-          "revision": "10caf46debbc4800c119d55cfe549ed0aad47d89",
+          "revision": "962197cd9d2dfbf8eab496b7fe85a80b9a1312a8",
           "version": null
         }
       },
@@ -240,8 +249,8 @@
         "repositoryURL": "https://github.com/vapor/vapor.git",
         "state": {
           "branch": null,
-          "revision": "88901368be090e69077418c36d17552e145ddd6e",
-          "version": "4.54.1"
+          "revision": "18e9419cae5049e43ca1e8002ca3cf0449f2c8ed",
+          "version": "4.55.0"
         }
       },
       {

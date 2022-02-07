@@ -14,7 +14,8 @@ final class SealedShare: Model {
 
     struct Infos: Content {
         let sealed: String
-        let key: String
+        let salt: String
+        let iterations: Int
     }
 
     struct Output: Content {

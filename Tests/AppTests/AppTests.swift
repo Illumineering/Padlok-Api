@@ -234,16 +234,13 @@ final class AppTests: XCTestCase {
         defer { app.shutdown() }
         try configure(app)
 
-        let key = "HGp4M0KDdFKJg4U+BM5LvxNrUps+F8PraN+oe6PTWB8="
-        let sealed = "49Gyk7tk5/qUnOrHW/p6l93r208MkKg7nGrj4mBha3J3+J3+eQp8PDuL2MnSjMX63pxHHI00dQPgTaT7NmL1IAhq8JKS6W7GJ1uutGiOwIuhQ+pMkHaG8CdOXwtMhFDYTtQBwVvlo4+e3jMZQHVZRrMqPJUJ6iEUvLNRu4pqrsuCLvgFYbRIXAsbpqAdxIstRq8EP3UWHwPhwcJVj3S1p+q2ZyjMSW3gSjweWMbhgtTwHt2Jb4VL64dXzZs97lo7VvZPGPnfRPCeCMISTYLLyX4HyBsCTmMgF9u6WMbV+9bt/eAgOHi4P7MZc2zDqrsSQ/sBusoz0nmFm+hqHI/ZW/hq642PQtgEby6Taoqz9DxSvnf1mVCOKVW+itFFhejS7hA+cCWMSFZi3ji2QcxZabzOUNau08xxyr0c+79cqXXod0e2pqk+2t/TTIoi/XaoXapLu/EbVnQwB5kvqQtyQR1qO59yDmBghYvMcpZXnk/yS0rm1DPqbWpJXOe6otFjbuDYqRIL1KI9stM+JrUVSgNe6185w0IzmqJuDmQw45VTSx9daiQqPM+jfdolNpA6l4p9JRIIr+jUKO3qdyMXF2FjLy4yTdhlMLel60+4R28VRzMu57zdx2t7frfmKhbW0FRQvPm3hGuyXiTJ5unT29DEDZ1HqsaaMqpdtB6INm4="
+        let salt = "ZZ9kHI6uEyw="
+        let sealed = "hI7vl1On13OSsr+cf7Y/2ue5k4+S3yvNaxdr2n0UAW0P3PpXGF9xytPd8wQ+jXpj0CGSiUqeVIQxYqm3X6JN2GObVHNvs9E88piLEe+Pie6W0ToEm25vzK6tEahpy8dijLbUeDvOVT6N18KBy5UW4I6sxo5EajwV8CrfM37YW4rOt/FTffjVrN1D0F2uJnD7GYn2lddb+bR+ZLDmVhKRklJNXpt9vhPllgq4GDgG7zHMseUGy01cvfcP+jUQYIDeu1yLufKEcZsnPK6HAGhMYQYMNkwS1ynGGbVbLtsRDsfOZTsBzAKsIfB1iePYB28NsBqWPzkUbMXT+jwCJyuEWmEZN9Ka4dCZ9/PEBbTaUbYKM/xUWpLJF/69aYvvKMzeQLKOPKlgKodpAIwkOiNhDiOFM0Ve0SRkaC+c4JO8/IGrmFOJhABBkOpUssVe2L33nymvprCqQo7sVTZgcWTizGPPzMHTiEB2wHF8AcvcCvO3eiyZSmqHCANAZ4D/shuBxlObi4/AUVMScqWI2eZ2Z7fM7EMP92ZsYEMUKk6NX9dpJqmdtrZR+bjqgEAnab2g7THf153YlxNWTVoxQbGjYk/VCl2BDDQRfKecelR/7d5hmpnfQbphZEeIe0vynl78VZlevugmUGkU0cg/ze835z4aZ7zX+zfg"
 
         // Post a building to be shared
         var output: SealedShare.Output?
         try app.test(.POST, "share", beforeRequest: { req in
-            try req.content.encode([
-                "key": key,
-                "sealed": sealed,
-            ])
+            try req.content.encode(SealedShare.Infos(sealed: sealed, salt: salt, iterations: 1000))
         }, afterResponse: { res in
             XCTAssertEqual(res.status, .ok)
             output = try res.content.decode(SealedShare.Output.self)
@@ -256,21 +253,16 @@ final class AppTests: XCTestCase {
                 XCTAssertEqual(res.status, .ok)
                 do {
                     let infos = try res.content.decode(SealedShare.Infos.self)
-                    XCTAssertEqual(infos.key, key)
                     XCTAssertEqual(infos.sealed, sealed)
-                    let jsonString = try res.content.decode([String: String].self)
-                    XCTAssertEqual(jsonString["key"], key)
-                    XCTAssertEqual(jsonString["sealed"], sealed)
-                    let jsonData = try res.content.decode([String: Data].self)
-                    XCTAssertEqual(jsonData["key"]?.base64EncodedString(), key)
-                    XCTAssertEqual(jsonData["sealed"]?.base64EncodedString(), sealed)
+                    XCTAssertEqual(infos.salt, salt)
+                    XCTAssertEqual(infos.iterations, 1000)
                 } catch {
                     XCTFail("Data should be decoded as SealedShare.Infos.")
                 }
             }
 
             // Test with correct passphrase
-            try app.test(.GET, "shared/\(output.identifier)/DV9LX4CCoW2Y") { res in
+            try app.test(.GET, "shared/\(output.identifier)/K2lZHO6q6akZ") { res in
                 XCTAssertEqual(res.status, .ok)
                 do {
                     let building = try res.content.decode(Models.Building.self)

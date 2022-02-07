@@ -12,7 +12,7 @@ struct CreateSealedShare: Migration {
     func prepare(on database: Database) -> EventLoopFuture<Void> {
         return database.schema("sealed_shares")
             .id()
-            .field("infos", .dictionary(of: .string), .required)
+            .field("infos", .dictionary, .required)
             .field("created_at", .datetime, .required)
             .create()
     }
