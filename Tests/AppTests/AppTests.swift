@@ -234,8 +234,9 @@ final class AppTests: XCTestCase {
         defer { app.shutdown() }
         try configure(app)
 
-        let salt = "ZZ9kHI6uEyw="
-        let sealed = "hI7vl1On13OSsr+cf7Y/2ue5k4+S3yvNaxdr2n0UAW0P3PpXGF9xytPd8wQ+jXpj0CGSiUqeVIQxYqm3X6JN2GObVHNvs9E88piLEe+Pie6W0ToEm25vzK6tEahpy8dijLbUeDvOVT6N18KBy5UW4I6sxo5EajwV8CrfM37YW4rOt/FTffjVrN1D0F2uJnD7GYn2lddb+bR+ZLDmVhKRklJNXpt9vhPllgq4GDgG7zHMseUGy01cvfcP+jUQYIDeu1yLufKEcZsnPK6HAGhMYQYMNkwS1ynGGbVbLtsRDsfOZTsBzAKsIfB1iePYB28NsBqWPzkUbMXT+jwCJyuEWmEZN9Ka4dCZ9/PEBbTaUbYKM/xUWpLJF/69aYvvKMzeQLKOPKlgKodpAIwkOiNhDiOFM0Ve0SRkaC+c4JO8/IGrmFOJhABBkOpUssVe2L33nymvprCqQo7sVTZgcWTizGPPzMHTiEB2wHF8AcvcCvO3eiyZSmqHCANAZ4D/shuBxlObi4/AUVMScqWI2eZ2Z7fM7EMP92ZsYEMUKk6NX9dpJqmdtrZR+bjqgEAnab2g7THf153YlxNWTVoxQbGjYk/VCl2BDDQRfKecelR/7d5hmpnfQbphZEeIe0vynl78VZlevugmUGkU0cg/ze835z4aZ7zX+zfg"
+        let salt = "kLpHPb2zsjo="
+
+        let sealed = "rphyE9rfNKrLwupKCR7bSTTOxlm++joQFqiR8UOYfXKFw2D9oQ/bo1gtFFYwre7El4AUWyA64MatY6KVAhJu9EBErzMyIRM4ezZU76rovsbM27W20FEBRqIlE1msM92MirPTb6/koZhSp2vr1jH62fayfVwt2uckC5iRMLolxrFCylKxToi+qyXzr6KPETJR1Rzf9W5P1JmAC209nkoA6LduKKPYhiYguecmWawYdfJEmtmlnfMPZMTTGWrAgJ4yW/hxqeMqgSaFi5495FficfqlBx6eieH20NtW58BFt0uX4tGKLyHtJU/XVMeayOcV4cBHK87MToZNevRTtjf2zq8Pdk3YxerNOzPBDzeX17NJvq0s6mAGg5brQouwT/1GxYbWkDhUjb/ztJVm706ruGsUtqtk5ohtYW88J2lk/95qW0/GLhlzwaBEXEYXoUBmEp6nDuvDa86KG9JWmYwCaXnGezsEc64Qh1ZfsCtfDL+Xp2W4jqdKMPtgFwnC3jO+10uqr+iOuUktkU0dTC7UHKs1OPala4vY8Y0ZS54z062rrRbgp+gj5EBQh0yejZPfVoxU8ySfQoj6fmB7CFpuVP/dSutCTbIi0F8z8SjAwJgBSFreYyoHQPS7+7628TPcGUa57OGrXAWTa5Xz8+TiYyYek+jxkriaadHIeMj94QiqpbSMFHQ+dCuS1+zLsR3r"
 
         // Post a building to be shared
         var output: SealedShare.Output?
@@ -262,7 +263,7 @@ final class AppTests: XCTestCase {
             }
 
             // Test with correct passphrase
-            try app.test(.GET, "shared/\(output.identifier)/K2lZHO6q6akZ") { res in
+            try app.test(.GET, "shared/\(output.identifier)/BYhngAXAZ5o0") { res in
                 XCTAssertEqual(res.status, .ok)
                 do {
                     let building = try res.content.decode(Models.Building.self)
