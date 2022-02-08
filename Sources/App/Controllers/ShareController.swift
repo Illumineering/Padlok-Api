@@ -5,7 +5,6 @@
 //  Created by Thomas Durand on 30/01/2022.
 //
 
-import PadlokShare
 import UUIDShortener
 import Vapor
 
@@ -76,5 +75,3 @@ struct ShareController: RouteCollection {
             })
     }
 }
-
-extension Models.Building: Content {}

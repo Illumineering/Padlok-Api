@@ -29,15 +29,6 @@
         }
       },
       {
-        "package": "CryptoSwift",
-        "repositoryURL": "https://github.com/krzyzanowskim/CryptoSwift.git",
-        "state": {
-          "branch": null,
-          "revision": "12f2389aca4a07e0dd54c86ec23d0721ed88b8db",
-          "version": "1.4.3"
-        }
-      },
-      {
         "package": "fluent",
         "repositoryURL": "https://github.com/vapor/fluent.git",
         "state": {
@@ -98,15 +89,6 @@
           "branch": null,
           "revision": "f0e8ad7e18e870e8665311d70bf3f01dcd6024a8",
           "version": "1.4.0"
-        }
-      },
-      {
-        "package": "PadlokShare",
-        "repositoryURL": "https://github.com/Dean151/padlok-sharekit",
-        "state": {
-          "branch": "main",
-          "revision": "ca6833263126ed87f3779eb0b51251ba3bdaaee8",
-          "version": null
         }
       },
       {

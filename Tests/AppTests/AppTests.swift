@@ -6,7 +6,6 @@
 //  Copyright © 2022 Padlok. All rights reserved.
 //
 
-@testable import PadlokShare
 @testable import App
 import XCTVapor
 
