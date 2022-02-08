@@ -235,7 +235,6 @@ final class AppTests: XCTestCase {
         try configure(app)
 
         let salt = "kLpHPb2zsjo="
-
         let sealed = "rphyE9rfNKrLwupKCR7bSTTOxlm++joQFqiR8UOYfXKFw2D9oQ/bo1gtFFYwre7El4AUWyA64MatY6KVAhJu9EBErzMyIRM4ezZU76rovsbM27W20FEBRqIlE1msM92MirPTb6/koZhSp2vr1jH62fayfVwt2uckC5iRMLolxrFCylKxToi+qyXzr6KPETJR1Rzf9W5P1JmAC209nkoA6LduKKPYhiYguecmWawYdfJEmtmlnfMPZMTTGWrAgJ4yW/hxqeMqgSaFi5495FficfqlBx6eieH20NtW58BFt0uX4tGKLyHtJU/XVMeayOcV4cBHK87MToZNevRTtjf2zq8Pdk3YxerNOzPBDzeX17NJvq0s6mAGg5brQouwT/1GxYbWkDhUjb/ztJVm706ruGsUtqtk5ohtYW88J2lk/95qW0/GLhlzwaBEXEYXoUBmEp6nDuvDa86KG9JWmYwCaXnGezsEc64Qh1ZfsCtfDL+Xp2W4jqdKMPtgFwnC3jO+10uqr+iOuUktkU0dTC7UHKs1OPala4vY8Y0ZS54z062rrRbgp+gj5EBQh0yejZPfVoxU8ySfQoj6fmB7CFpuVP/dSutCTbIi0F8z8SjAwJgBSFreYyoHQPS7+7628TPcGUa57OGrXAWTa5Xz8+TiYyYek+jxkriaadHIeMj94QiqpbSMFHQ+dCuS1+zLsR3r"
 
         // Post a building to be shared
@@ -249,7 +248,6 @@ final class AppTests: XCTestCase {
 
         // Try to get this building data now
         if let output = output {
-            // Test without passphrase
             try app.test(.GET, "shared/\(output.identifier)") { res in
                 XCTAssertEqual(res.status, .ok)
                 do {
@@ -262,34 +260,22 @@ final class AppTests: XCTestCase {
                 }
             }
 
-            // Test with correct passphrase
-            try app.test(.GET, "shared/\(output.identifier)/BYhngAXAZ5o0") { res in
-                XCTAssertEqual(res.status, .ok)
-                do {
-                    let building = try res.content.decode(Models.Building.self)
-                    XCTAssertEqual(building.address, "55 de la rue du Faubourg-Saint-Honoré")
-                    XCTAssertEqual(building.coordinates.latitude, 48.869978342034287)
-                    XCTAssertEqual(building.coordinates.longitude, 2.3165022395478303)
-                    XCTAssertEqual(building.building, "Principal")
-                    XCTAssertEqual(building.intercom, "M. le Président")
-                    XCTAssertEqual(building.staircase, "Principal")
-                    XCTAssertEqual(building.floor, 1)
-                    XCTAssertEqual(building.doors.count, 4)
-                    XCTAssertEqual(building.doors[0].label, .door)
-                    XCTAssertEqual(building.doors[1].label, .gate)
-                    XCTAssertEqual(building.doors[2].label, .portal)
-                    XCTAssertEqual(building.doors[3].label, .custom(string: "Porte Jupiter"))
-                    XCTAssertEqual(building.doors[0].code, "AB23C")
-                    XCTAssertEqual(building.doors[1].code, "P12BD")
-                    XCTAssertEqual(building.doors[2].code, "GUARD")
-                    XCTAssertEqual(building.doors[3].code, "19B29B02")
-                } catch {
-                    XCTFail("Data should be decoded as Models.Building.")
-                }
-            }
+            // TODO: .PUT tests for editing a shared info
 
-            // Test with incorrect passphrase
-            try app.test(.GET, "shared/\(output.identifier)/abcdefghijkl") { res in
+            // Wrong admin token
+            try app.test(.DELETE, "shared/\(output.identifier)/abcdef") { res in
+                XCTAssertEqual(res.status, .notFound)
+            }
+            // Should still be here
+            try app.test(.GET, "shared/\(output.identifier)") { res in
+                XCTAssertEqual(res.status, .ok)
+            }
+            // Now we delete it
+            try app.test(.DELETE, "shared/\(output.identifier)/\(output.adminToken)") { res in
+                XCTAssertEqual(res.status, .ok)
+            }
+            // And try to fetch it again
+            try app.test(.GET, "shared/\(output.identifier)") { res in
                 XCTAssertEqual(res.status, .notFound)
             }
         } else {
@@ -298,11 +284,6 @@ final class AppTests: XCTestCase {
 
         // Test with unknown identifier
         try app.test(.GET, "shared/\(try UUID().shortened(using: .base62))") { res in
-            XCTAssertEqual(res.status, .notFound)
-        }
-
-        // Test with unknown identifier
-        try app.test(.GET, "shared/\(try UUID().shortened(using: .base62))/abcdefghijkl") { res in
             XCTAssertEqual(res.status, .notFound)
         }
     }

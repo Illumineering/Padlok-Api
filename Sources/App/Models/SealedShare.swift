@@ -7,6 +7,7 @@
 
 import Fluent
 import Vapor
+import Require
 import UUIDShortener
 
 final class SealedShare: Model {
@@ -20,6 +21,7 @@ final class SealedShare: Model {
 
     struct Output: Content {
         let identifier: String
+        let adminToken: String
     }
 
     @ID(key: .id)
@@ -28,18 +30,25 @@ final class SealedShare: Model {
     @Field(key: "infos")
     var infos: Infos
 
+    @Field(key: "admin_token")
+    var adminToken: String?
+
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
+
+    @Timestamp(key: "updated_at", on: .update)
+    var updatedAt: Date?
 
     init() {}
 
     init(id: UUID? = nil, infos: Infos) {
         self.id = id
         self.infos = infos
+        self.adminToken = try? UUID().shortened(using: .base62)
     }
 
     func output() throws -> Output {
         let identifier = try self.requireID()
-        return Output(identifier: try identifier.shortened(using: .base62))
+        return Output(identifier: try identifier.shortened(using: .base62), adminToken: adminToken.require())
     }
 }

@@ -13,7 +13,9 @@ struct CreateSealedShare: Migration {
         return database.schema("sealed_shares")
             .id()
             .field("infos", .dictionary, .required)
+            .field("admin_token", .string, .required)
             .field("created_at", .datetime, .required)
+            .field("updated_at", .datetime, .required)
             .create()
     }
 

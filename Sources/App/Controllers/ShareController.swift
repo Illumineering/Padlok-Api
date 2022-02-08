@@ -12,46 +12,68 @@ import Vapor
 struct ShareController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         routes.get("shared", ":identifier", use: decodeSharedInfos)
-        // FIXME: Maybe this will be not necessary, preventing the back-end from ever decrypting the infos is better
-        routes.get("shared", ":identifier", ":passphrase", use: decryptSharedInfos)
         routes.post("share", use: encodeSharedInfos)
+        routes.put("shared", ":identifier", ":adminToken", use: updateSharedInfos)
+        routes.delete("shared", ":identifier", ":adminToken", use: deleteSharedInfos)
+    }
+
+    private func find(_ shortIdentifier: String, from req: Request) throws -> EventLoopFuture<SealedShare> {
+        guard let identifier = try? UUID(shortened: shortIdentifier, using: .base62) else {
+            throw Abort(.badRequest, reason: "Unparsable identifier")
+        }
+        return SealedShare.find(identifier, on: req.db).unwrap(or: Abort(.notFound))
+    }
+
+    private func findForAdmin(_ shortIdentifier: String, adminToken: String, from req: Request) throws -> EventLoopFuture<SealedShare> {
+        try find(shortIdentifier, from: req)
+            .guard({ $0.adminToken == adminToken }, else: Abort(.notFound))
     }
 
     private func decodeSharedInfos(req: Request) throws -> EventLoopFuture<SealedShare.Infos> {
-        guard let shortIdentifier = req.parameters.get("identifier"),
-              let identifier = try? UUID(shortened: shortIdentifier, using: .base62) else {
-            throw Abort(.badRequest, reason: "Missing or unparsable identifier")
+        guard let shortIdentifier = req.parameters.get("identifier") else {
+            throw Abort(.badRequest, reason: "Missing identifier")
         }
-        return SealedShare.find(identifier, on: req.db)
-            .unwrap(or: Abort(.notFound))
-            .map {
-                req.logger.debug("SealedShare found", metadata: .none)
-                return $0.infos
-            }
-    }
-
-    // FIXME: Maybe this will be not necessary, preventing the back-end from ever decrypting the infos is better
-    private func decryptSharedInfos(req: Request) throws -> EventLoopFuture<Models.Building> {
-        guard let passphrase = req.parameters.get("passphrase") else {
-            throw Abort(.badRequest, reason: "Missing passphrase")
+        return try find(shortIdentifier, from: req).map {
+            req.logger.debug("SealedShare found", metadata: .none)
+            return $0.infos
         }
-        return try decodeSharedInfos(req: req)
-            .flatMapThrowing({ infos throws -> Models.Building in
-                do {
-                    guard let combined = Data(base64Encoded: infos.sealed), let salt = Data(base64Encoded: infos.salt) else {
-                        throw Abort(.notFound)
-                    }
-                    return try Crypto.open(.init(key: .init(passphrase: passphrase, salt: salt, iterations: infos.iterations), combined: combined))
-                } catch {
-                    throw Abort(. notFound)
-                }
-            })
     }
 
     private func encodeSharedInfos(req: Request) throws -> EventLoopFuture<SealedShare.Output> {
         let infos = try req.content.decode(SealedShare.Infos.self)
         let sealedShare = SealedShare(infos: infos)
         return sealedShare.create(on: req.db).flatMapThrowing { try sealedShare.output() }
+    }
+
+    private func updateSharedInfos(req: Request) throws -> EventLoopFuture<Response> {
+        guard let shortIdentifier = req.parameters.get("identifier") else {
+            throw Abort(.badRequest, reason: "Missing identifier")
+        }
+        guard let adminToken = req.parameters.get("adminToken") else {
+            throw Abort(.badRequest, reason: "Missing adminToken")
+        }
+        return try findForAdmin(shortIdentifier, adminToken: adminToken, from: req)
+            .tryFlatMap({
+                $0.infos = try req.content.decode(SealedShare.Infos.self)
+                return $0.update(on: req.db).map({
+                    return Response(status: .ok)
+                })
+            })
+    }
+
+    private func deleteSharedInfos(req: Request) throws -> EventLoopFuture<Response> {
+        guard let shortIdentifier = req.parameters.get("identifier") else {
+            throw Abort(.badRequest, reason: "Missing identifier")
+        }
+        guard let adminToken = req.parameters.get("adminToken") else {
+            throw Abort(.badRequest, reason: "Missing adminToken")
+        }
+        return try findForAdmin(shortIdentifier, adminToken: adminToken, from: req)
+            .tryFlatMap({
+                return $0.delete(on: req.db).map({
+                    return Response(status: .ok)
+                })
+            })
     }
 }
 
