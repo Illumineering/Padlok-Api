@@ -56,6 +56,13 @@ public func configure(_ app: Application) throws {
     app.migrations.add(CreateSealedShare())
     try app.autoMigrate().wait()
 
+    // Custom encoder/decoder strategies
+    let encoder = JSONEncoder(), decoder = JSONDecoder()
+    encoder.keyEncodingStrategy = .convertToSnakeCase
+    decoder.keyDecodingStrategy = .convertFromSnakeCase
+    ContentConfiguration.global.use(encoder: encoder, for: .json)
+    ContentConfiguration.global.use(decoder: decoder, for: .json)
+
     // register routes
     try routes(app)
 }
