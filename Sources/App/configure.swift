@@ -27,6 +27,13 @@ extension Environment {
 
 // configures your application
 public func configure(_ app: Application) throws {
+    // Custom encoder/decoder strategies
+    let encoder = JSONEncoder(), decoder = JSONDecoder()
+    encoder.keyEncodingStrategy = .convertToSnakeCase
+    decoder.keyDecodingStrategy = .convertFromSnakeCase
+    ContentConfiguration.global.use(encoder: encoder, for: .json)
+    ContentConfiguration.global.use(decoder: decoder, for: .json)
+
     // register routes
     try routes(app)
 }
