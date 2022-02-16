@@ -11,12 +11,22 @@ let package = Package(
         .package(url: "https://github.com/vapor/vapor.git", .upToNextMajor(from: "4.0.0")),
         // Require helper for unwrap stuff
         .package(url: "https://github.com/johnsundell/require", .upToNextMajor(from: "2.0.1")),
+        // Padlok Share dependencies
+        .package(url: "https://github.com/Dean151/uuid-shortener", from: "1.0.0"),
+        // Fluent persistence of data
+        .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0"),
+        .package(url: "https://github.com/vapor/fluent-mysql-driver.git", from: "4.0.0"),
+        .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.0.0"),
     ],
     targets: [
         .target(
             name: "App",
             dependencies: [
+                .product(name: "Fluent", package: "fluent"),
+                .product(name: "FluentMySQLDriver", package: "fluent-mysql-driver"),
+                .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
                 .product(name: "Require", package: "require"),
+                .product(name: "UUIDShortener", package: "uuid-shortener"),
                 .product(name: "Vapor", package: "vapor"),
             ],
             swiftSettings: [

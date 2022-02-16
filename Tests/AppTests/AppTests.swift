@@ -227,4 +227,63 @@ final class AppTests: XCTestCase {
             XCTAssertEqual(res.status, .ok)
         })
     }
+
+    func testShareFeature() throws {
+        let app = Application(.testing)
+        defer { app.shutdown() }
+        try configure(app)
+
+        let salt = "kLpHPb2zsjo="
+        let sealed = "rphyE9rfNKrLwupKCR7bSTTOxlm++joQFqiR8UOYfXKFw2D9oQ/bo1gtFFYwre7El4AUWyA64MatY6KVAhJu9EBErzMyIRM4ezZU76rovsbM27W20FEBRqIlE1msM92MirPTb6/koZhSp2vr1jH62fayfVwt2uckC5iRMLolxrFCylKxToi+qyXzr6KPETJR1Rzf9W5P1JmAC209nkoA6LduKKPYhiYguecmWawYdfJEmtmlnfMPZMTTGWrAgJ4yW/hxqeMqgSaFi5495FficfqlBx6eieH20NtW58BFt0uX4tGKLyHtJU/XVMeayOcV4cBHK87MToZNevRTtjf2zq8Pdk3YxerNOzPBDzeX17NJvq0s6mAGg5brQouwT/1GxYbWkDhUjb/ztJVm706ruGsUtqtk5ohtYW88J2lk/95qW0/GLhlzwaBEXEYXoUBmEp6nDuvDa86KG9JWmYwCaXnGezsEc64Qh1ZfsCtfDL+Xp2W4jqdKMPtgFwnC3jO+10uqr+iOuUktkU0dTC7UHKs1OPala4vY8Y0ZS54z062rrRbgp+gj5EBQh0yejZPfVoxU8ySfQoj6fmB7CFpuVP/dSutCTbIi0F8z8SjAwJgBSFreYyoHQPS7+7628TPcGUa57OGrXAWTa5Xz8+TiYyYek+jxkriaadHIeMj94QiqpbSMFHQ+dCuS1+zLsR3r"
+
+        // Post a building to be shared
+        var output: SealedShare.Output?
+        try app.test(.POST, "share", beforeRequest: { req in
+            try req.content.encode(SealedShare.Infos(sealed: sealed, salt: salt, iterations: 1000))
+        }, afterResponse: { res in
+            XCTAssertEqual(res.status, .ok)
+            output = try res.content.decode(SealedShare.Output.self)
+        })
+
+        // Try to get this building data now
+        if let output = output {
+            try app.test(.GET, "shared/\(output.identifier)") { res in
+                XCTAssertEqual(res.status, .ok)
+                do {
+                    let infos = try res.content.decode(SealedShare.Infos.self)
+                    XCTAssertEqual(infos.sealed, sealed)
+                    XCTAssertEqual(infos.salt, salt)
+                    XCTAssertEqual(infos.iterations, 1000)
+                } catch {
+                    XCTFail("Data should be decoded as SealedShare.Infos.")
+                }
+            }
+
+            // TODO: .PUT tests for editing a shared info
+
+            // Wrong admin token
+            try app.test(.DELETE, "shared/\(output.identifier)/abcdef") { res in
+                XCTAssertEqual(res.status, .notFound)
+            }
+            // Should still be here
+            try app.test(.GET, "shared/\(output.identifier)") { res in
+                XCTAssertEqual(res.status, .ok)
+            }
+            // Now we delete it
+            try app.test(.DELETE, "shared/\(output.identifier)/\(output.adminToken)") { res in
+                XCTAssertEqual(res.status, .ok)
+            }
+            // And try to fetch it again
+            try app.test(.GET, "shared/\(output.identifier)") { res in
+                XCTAssertEqual(res.status, .notFound)
+            }
+        } else {
+            XCTFail("Could not get output from previous test")
+        }
+
+        // Test with unknown identifier
+        try app.test(.GET, "shared/\(try UUID().shortened(using: .base62))") { res in
+            XCTAssertEqual(res.status, .notFound)
+        }
+    }
 }
