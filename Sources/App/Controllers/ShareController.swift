@@ -10,8 +10,8 @@ import Vapor
 
 struct ShareController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
-        routes.get("shared", ":identifier", use: decodeSharedInfos)
-        routes.post("share", use: encodeSharedInfos)
+        routes.get("shared", ":identifier", use: getSharedInfos)
+        routes.post("share", use: createSharedInfos)
         routes.put("shared", ":identifier", ":adminToken", use: updateSharedInfos)
         routes.delete("shared", ":identifier", ":adminToken", use: deleteSharedInfos)
     }
@@ -28,7 +28,7 @@ struct ShareController: RouteCollection {
             .guard({ $0.adminToken == adminToken }, else: Abort(.notFound))
     }
 
-    private func decodeSharedInfos(req: Request) throws -> EventLoopFuture<SealedShare.Infos> {
+    private func getSharedInfos(req: Request) throws -> EventLoopFuture<SealedShare.Infos> {
         guard let shortIdentifier = req.parameters.get("identifier") else {
             throw Abort(.badRequest, reason: "Missing identifier")
         }
@@ -38,7 +38,7 @@ struct ShareController: RouteCollection {
         }
     }
 
-    private func encodeSharedInfos(req: Request) throws -> EventLoopFuture<SealedShare.Output> {
+    private func createSharedInfos(req: Request) throws -> EventLoopFuture<SealedShare.Output> {
         let infos = try req.content.decode(SealedShare.Infos.self)
         let sealedShare = SealedShare(infos: infos)
         return sealedShare.create(on: req.db).flatMapThrowing { try sealedShare.output() }

@@ -17,6 +17,13 @@ final class SealedShare: Model {
         let sealed: String
         let salt: String
         let iterations: Int
+
+        func afterDecode() throws {
+            // Validate data that is inputed ; so that it falls into acceptable range
+            if sealed.count > 16_384 || salt.count > 16 || iterations > 100_000 {
+                throw Abort(.payloadTooLarge, reason: "Payload is too large.")
+            }
+        }
     }
 
     struct Output: Content {
