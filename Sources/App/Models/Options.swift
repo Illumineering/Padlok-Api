@@ -12,6 +12,7 @@ import Vapor
 struct Options: Content, Equatable {
     struct URLs: Content, Equatable {
         let appstore: URL
+        let faq: URL
         let marketing: URL
         let privacy: URL
         let support: URL
@@ -24,6 +25,7 @@ struct Options: Content, Equatable {
             case .english:
                 return .init(
                     appstore: "https://apps.apple.com/us/app/padlok/id1546719801",
+                    faq: "https://padlok.app/frequently-asked-questions/",
                     marketing: "https://padlok.app",
                     privacy: "https://padlok.app/privacy",
                     support: "https://padlok.app/support",
@@ -33,6 +35,7 @@ struct Options: Content, Equatable {
             case .french:
                 return .init(
                     appstore: "https://apps.apple.com/fr/app/padlok/id1546719801",
+                    faq: "https://padlok.app/fr/foire-aux-questions/",
                     marketing: "https://padlok.app/fr",
                     privacy: "https://padlok.app/fr/confidentialite",
                     support: "https://padlok.app/fr/assistance",
