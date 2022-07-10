@@ -56,7 +56,7 @@ struct Options: Content, Equatable {
     static func adapted(for language: Language) -> Options {
         Options(
             apiVersion: "2.0.0",
-            tracesSampleRate: 0.5,
+            tracesSampleRate: 1,
             urls: .adapted(for: language)
         )
     }
