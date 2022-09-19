@@ -48,6 +48,8 @@ struct Options: Content, Equatable {
 
     /// An arbitrary version number to provide information regarding the API ; like when deprecating stuff
     let apiVersion: String
+    /// An array of questions/anwsers for frequently asked questions
+    let faq: [FrequentlyAskedQuestion]
     /// Sentry traces sample rate, to increase or decrease the number of events reported to Sentry API
     let tracesSampleRate: Double
     /// URLs used by the application for different subset of the application
@@ -55,7 +57,8 @@ struct Options: Content, Equatable {
 
     static func adapted(for language: Language) -> Options {
         Options(
-            apiVersion: "2.0.0",
+            apiVersion: "3.0.0",
+            faq: .adapted(for: language),
             tracesSampleRate: 1,
             urls: .adapted(for: language)
         )
