@@ -24,12 +24,13 @@ extension FrequentlyAskedQuestion.Category {
     // English
     static let gettingStarted = Self(name: "Getting started", icon: "lightbulb")
     static let notifications = Self(name: "Notifications", icon: "bell")
-    static let sharing = Self(name: "Sharing", icon: "link")
+    static let sharing = Self(name: "Sharing", icon: "person.2")
     static let privacy = Self(name: "Privacy", icon: "hand.raised")
+    static let premium = Self(name: "Premium", icon: "star")
 
     // French
     static let commencer = Self(name: "Commencer", icon: "lightbulb")
-    static let partage = Self(name: "Partage", icon: "link")
+    static let partage = Self(name: "Partage", icon: "person.2")
     static let confidentialite = Self(name: "Confidentialité", icon: "hand.raised")
 }
 
@@ -83,6 +84,16 @@ extension Array where Element == FrequentlyAskedQuestion {
                     question: "How is stored the data I shared with a link?",
                     answer: "Not in an exploitable way. When you generate a share link, your data is encrypted *on your device*, and then sent to my servers in France. The encryption key is in the url. Without the url, there is no way to actually access the data. I cannot access your data, and nobody should. When opening the link, either the application, or the website will decrypt the data sent by my server *on your device*. Therefore, this is a end-to-end encryption mecanism."
                 ),
+                .init(
+                    category: .privacy,
+                    question: "What happens after my subscription ends?",
+                    answer: "After you subscription ends, you will lose the premium features that are attached. If you have more than three addresses created, you will only be able to consult the three closest; so you won’t loose any data. And you’ll be free to delete any addresses you want."
+                ),
+                .init(
+                    category: .privacy,
+                    question: "Can I upgrade to lifetime premium before my subscription ends?",
+                    answer: "Yes, you can! First you’ll need to cancel your subscription renewall, then a button “Upgrade to lifetime” will be available in the about screen with a lower price."
+                ),
             ]
         case .french:
             return [
@@ -130,6 +141,16 @@ extension Array where Element == FrequentlyAskedQuestion {
                     category: .confidentialite,
                     question: "Comment sont stockées les données partagées par un lien ?",
                     answer: "Pas d’une façon exploitable. Lorsque vous générez un lien de partage, vos données sont chiffrées *sur votre appareil*, et ensuite envoyées sur mes serveurs en France. La clé de chiffrement est inclue dans l’url. Sans cette url, il est impossible d’accéder à vos données. Je ne peux pas accéder à vos données, et personne d’autre ne le pourrait. Lorsqu’un lien est ouvert, soit l’application, ou le site va déchiffrer les données renvoyées par mon serveur *sur votre appareil*. Par conséquent, il s’agit d’un chiffrement bout en bout."
+                ),
+                .init(
+                    category: .privacy,
+                    question: "Que se passe-t-il lorsque mon abonnement prend fin ?",
+                    answer: "À la fin de votre abonnement, vous perdrez tous les avantages Premium qui y sont attachés. Si vous avez plus de trois adresses, vous ne pourrez consulter que les trois plus proches ; vous ne perdez donc aucune de vos données. Vous serez toujours libre de supprimer n’importe quelle adresse."
+                ),
+                .init(
+                    category: .privacy,
+                    question: "Puis-je passer à un abonnement à vie avant la fin de mon abonnement annuel ?",
+                    answer: "Oui ! Tout d’abord, vous devrez annuler le renouvellement de votre abonnement, ensuite, un bouton “Conserver à vie” sera disponible sur l’écran à propos à tarif réduit."
                 ),
             ]
         }
