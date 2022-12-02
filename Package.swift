@@ -1,4 +1,4 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.7
 import PackageDescription
 
 let package = Package(
@@ -8,9 +8,9 @@ let package = Package(
     ],
     dependencies: [
         // 💧 A server-side Swift web framework.
-        .package(url: "https://github.com/vapor/vapor.git", .upToNextMajor(from: "4.0.0")),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
         // Require helper for unwrap stuff
-        .package(url: "https://github.com/johnsundell/require", .upToNextMajor(from: "2.0.1")),
+        .package(url: "https://github.com/johnsundell/require", from: "2.0.1"),
         // Padlok Share dependencies
         .package(url: "https://github.com/Dean151/uuid-shortener", from: "1.0.0"),
         // Fluent persistence of data
