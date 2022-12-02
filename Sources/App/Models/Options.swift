@@ -51,7 +51,7 @@ struct Options: Content, Equatable {
     /// An array of questions/anwsers for frequently asked questions
     let faq: [FrequentlyAskedQuestion]
     /// Sentry traces sample rate, to increase or decrease the number of events reported to Sentry API
-    let eventSampleRate: Double
+    let eventsSampleRate: Double
     /// Sentry traces sample rate, to increase or decrease the number of events reported to Sentry API
     let profilesSampleRate: Double
     /// Sentry traces sample rate, to increase or decrease the number of events reported to Sentry API
@@ -63,7 +63,7 @@ struct Options: Content, Equatable {
         Options(
             apiVersion: "4.0.0",
             faq: .adapted(for: language),
-            eventSampleRate: 0.66,
+            eventsSampleRate: 0.66,
             profilesSampleRate: 0.1,
             tracesSampleRate: 0.66,
             urls: .adapted(for: language)
