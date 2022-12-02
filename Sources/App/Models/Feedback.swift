@@ -28,8 +28,7 @@ struct Feedback: Content {
             throw Abort(.badRequest, reason: "Non-empty value required for key 'message'")
         }
 
-        // TODO: email here is not correctly checked against
-        if let email = email, !email.isEmpty, Validator.email.validate(email).isFailure {
+        if let email = email, !email.isEmpty, Validator.internationalEmail.validate(email).isFailure {
             throw Abort(.badRequest, reason: "Entered email is not a valid email")
         }
     }
