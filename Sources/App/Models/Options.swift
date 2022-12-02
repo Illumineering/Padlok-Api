@@ -61,7 +61,7 @@ struct Options: Content, Equatable {
 
     static func adapted(for language: Language) -> Options {
         Options(
-            apiVersion: "3.0.0",
+            apiVersion: "4.0.0",
             faq: .adapted(for: language),
             eventSampleRate: 0.66,
             profilesSampleRate: 0.1,
