@@ -76,6 +76,11 @@ extension Array where Element == FrequentlyAskedQuestion {
                 ),
                 .init(
                     category: .privacy,
+                    question: "What data is collected by Padlok?",
+                    answer: "Padlok asks you for you location. But the location is only used on your device and is never send to the outside world. The only data Padlok collects are anonymized, and are all for purchases managements and statistics; or for analytics and performance monitoring. Padlok does not gather any personal data, any address or any address info."
+                ),
+                .init(
+                    category: .privacy,
                     question: "Where is my data stored and is it accessible by others?",
                     answer: "Your application data is stored on device, and in iCloud if enabled on device. Only your devices connected to the same iCloud account can access this data. Nobody else."
                 ),
@@ -131,6 +136,11 @@ extension Array where Element == FrequentlyAskedQuestion {
                     category: .partage,
                     question: "Un code a changé, puis-je mettre à jour un lien déjà partagé ?",
                     answer: "Oui ! L’application va vous le proposer. Vous aurez alors deux choix pour modifier le lien : le mettre à jour, rendant les nouveaux codes disponibles sans modifier le lien ; ou de le re-générer de façon à ce que l’ancien lien devienne inutilisable. La seconde option est adaptée si vous ne souhaitez pas que les personnes à qui vous avez envoyé le lien puissent accéder aux nouvelles informations."
+                ),
+                .init(
+                    category: .confidentialite,
+                    question: "Quelles sont les données collectées par Padlok ?",
+                    answer: "Padlok vous demande l’authorisation de vous géolocaliser. Mais cette localisation n’est utilisée que par l'application sur votre appareil, et n’est jamais envoyée au monde extérieur. Les seule données que Padlok récupère sont anonymisées, et sont soit dans un but de gestion et analyse des achats, ou pour assurer la qualité de l'application et de ses performances. Padlok n’organise pas la récolte de données personnelles, de vos adresses, ou de vos informations associées."
                 ),
                 .init(
                     category: .confidentialite,
