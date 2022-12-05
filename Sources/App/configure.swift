@@ -10,6 +10,7 @@ import Fluent
 import FluentMySQLDriver
 import FluentSQLiteDriver
 import Vapor
+import VaporSMTPKit
 
 extension DirectoryConfiguration {
     var dataDirectory: String {
@@ -18,14 +19,31 @@ extension DirectoryConfiguration {
 }
 
 extension Environment {
-    @available(*, deprecated, message: "File creation should be replaced by a db insert instead")
-    var shouldWriteFile: Bool {
+    var shouldSendMail: Bool {
         switch self {
         case .testing:
             return false
         default:
             return true
         }
+    }
+}
+
+extension SMTPCredentials {
+    static var `default`: SMTPCredentials? {
+        guard let hostname = Environment.get("SMTP_EMAIL"),
+              let port = Environment.get("SMTP_PORT").flatMap({ Int($0) }),
+              let email = Environment.get("SMTP_EMAIL"),
+              let password = Environment.get("SMTP_PASSWORD") else {
+            return nil
+        }
+        return SMTPCredentials(
+            hostname: hostname,
+            port: port,
+            ssl: .startTLS(configuration: .default),
+            email: email,
+            password: password
+        )
     }
 }
 

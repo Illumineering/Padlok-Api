@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "Padlok-API",
     platforms: [
-        .macOS(.v11)
+        .macOS(.v12)
     ],
     dependencies: [
         // 💧 A server-side Swift web framework.
@@ -17,6 +17,8 @@ let package = Package(
         .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0"),
         .package(url: "https://github.com/vapor/fluent-mysql-driver.git", from: "4.0.0"),
         .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.0.0"),
+        // To send mails
+        .package(url: "https://github.com/Joannis/VaporSMTPKit.git", from: "1.0.0")
     ],
     targets: [
         .target(
@@ -28,6 +30,7 @@ let package = Package(
                 .product(name: "Require", package: "require"),
                 .product(name: "UUIDShortener", package: "uuid-shortener"),
                 .product(name: "Vapor", package: "vapor"),
+                .product(name: "VaporSMTPKit", package: "VaporSMTPKit"),
             ],
             swiftSettings: [
                 // Enable better optimizations when building in Release configuration. Despite the use of

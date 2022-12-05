@@ -5,26 +5,44 @@
 //  Created by Thomas Durand on 30/01/2022.
 //
 
+import SMTPKitten
 import Vapor
+import VaporSMTPKit
 
 struct FeedbackController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         routes.post("feedback", use: registerFeedback)
     }
 
-    private func registerFeedback(req: Request) throws -> Response {
+    private func registerFeedback(req: Request) async throws -> Response {
+        guard req.application.environment.shouldSendMail else {
+            return redirectOrOk(req: req)
+        }
+        guard let smtp = SMTPCredentials.default,
+              let sender = Environment.get("SENDER_EMAIL"),
+              let to = Environment.get("SUPPORT_EMAIL") else {
+            return Response(status: .internalServerError)
+        }
         let feedback = try req.content.decode(Feedback.self)
-        if req.application.environment.shouldWriteFile {
-            let path = req.application.directory.dataDirectory + UUID().uuidString + ".txt"
-            try feedback.description.write(toFile: path, atomically: true, encoding: .utf8)
-        }
+        let mail = Mail(
+            from: .init(stringLiteral: sender),
+            to: [.init(stringLiteral: to)],
+            subject: "Feedback received!",
+            contentType: .plain,
+            text: feedback.description
+        )
+        try await req.application.sendMail(mail, withCredentials: smtp).get()
+        return redirectOrOk(req: req)
+    }
+
+    private func redirectOrOk(req: Request) -> Response {
         // Redirect users when there is one provided ; used by the front
-        guard let redirect = try? req.query.decode(Feedback.Redirect.self), redirect.redirect.hasPrefix("https://padlok.app/") else {
-            // Otherwise, a simple 200 status will be enough
-            return Response(status: .ok)
+        if let redirect = try? req.query.decode(Feedback.Redirect.self), redirect.redirect.hasPrefix("https://padlok.app/") {
+            return Response(status: .found, headers: [
+                HTTPHeaders.Name.location.description: redirect.redirect
+            ])
         }
-        return Response(status: .found, headers: [
-            HTTPHeaders.Name.location.description: redirect.redirect
-        ])
+        // Otherwise, a simple 200 status will be enough
+        return Response(status: .ok)
     }
 }

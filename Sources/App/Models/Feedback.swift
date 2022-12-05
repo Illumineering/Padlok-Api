@@ -14,7 +14,7 @@ struct Feedback: Content {
     }
 
     enum Reason: String, Content {
-        case feedback, feature, bug, other
+        case feedback, feature, bug, help, other
     }
 
     let language: Language
