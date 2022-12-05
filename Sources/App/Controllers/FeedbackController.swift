@@ -21,12 +21,11 @@ struct FeedbackController: RouteCollection {
             return redirectOrOk(req: req)
         }
         guard let smtp = SMTPCredentials.default,
-              let sender = Environment.get("SENDER_EMAIL"),
               let to = Environment.get("SUPPORT_EMAIL") else {
             return Response(status: .internalServerError)
         }
         let mail = Mail(
-            from: .init(stringLiteral: sender),
+            from: .init(name: "Padlok Bot", email: "no_reply@padlok.app"),
             to: [.init(stringLiteral: to)],
             subject: "Feedback received!",
             contentType: .plain,
