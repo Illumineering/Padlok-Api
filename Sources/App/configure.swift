@@ -31,7 +31,7 @@ extension Environment {
 
 extension SMTPCredentials {
     static var `default`: SMTPCredentials? {
-        guard let hostname = Environment.get("SMTP_EMAIL"),
+        guard let hostname = Environment.get("SMTP_HOST"),
               let port = Environment.get("SMTP_PORT").flatMap({ Int($0) }),
               let email = Environment.get("SMTP_EMAIL"),
               let password = Environment.get("SMTP_PASSWORD") else {
