@@ -15,6 +15,8 @@ struct FeedbackController: RouteCollection {
     }
 
     private func registerFeedback(req: Request) async throws -> Response {
+        // Always decode first, otherwise error will not throw in tests, because shouldSendMail == false
+        let feedback = try req.content.decode(Feedback.self)
         guard req.application.environment.shouldSendMail else {
             return redirectOrOk(req: req)
         }
@@ -23,7 +25,6 @@ struct FeedbackController: RouteCollection {
               let to = Environment.get("SUPPORT_EMAIL") else {
             return Response(status: .internalServerError)
         }
-        let feedback = try req.content.decode(Feedback.self)
         let mail = Mail(
             from: .init(stringLiteral: sender),
             to: [.init(stringLiteral: to)],
