@@ -109,6 +109,15 @@
       }
     },
     {
+      "identity" : "smtpkitten",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/autimatisering/SMTPKitten.git",
+      "state" : {
+        "revision" : "b6b915ac9485ec0752744855a7957de44617d5ed",
+        "version" : "0.1.7"
+      }
+    },
+    {
       "identity" : "sql-kit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/sql-kit.git",
@@ -268,6 +277,15 @@
       "state" : {
         "revision" : "2d54398d50951f177eb899c05154636e381f3bc6",
         "version" : "4.67.4"
+      }
+    },
+    {
+      "identity" : "vaporsmtpkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Joannis/VaporSMTPKit.git",
+      "state" : {
+        "revision" : "330f788e1349d871e87eaa517705d8595c8ef885",
+        "version" : "1.0.3"
       }
     },
     {

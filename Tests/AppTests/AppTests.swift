@@ -218,7 +218,7 @@ final class AppTests: XCTestCase {
         // All keys, valid
         try app.test(.POST, "feedback", beforeRequest: { req in
             try req.content.encode([
-                "reason": "other",
+                "reason": "help",
                 "language": "en",
                 "email": "test@test.fr",
                 "message": "Hi, there!"

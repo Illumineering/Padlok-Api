@@ -14,7 +14,7 @@ struct Feedback: Content {
     }
 
     enum Reason: String, Content {
-        case feedback, feature, bug, other
+        case feedback, feature, bug, help, other
     }
 
     let language: Language
@@ -32,16 +32,42 @@ struct Feedback: Content {
             throw Abort(.badRequest, reason: "Entered email is not a valid email")
         }
     }
+
+    func enrich(using headers: HTTPHeaders) -> ContextualizedFeedback {
+        .init(
+            feedback: self,
+            appVersion: headers["App-Version"].first,
+            customer: headers["Customer-Identifier"].first,
+            device: headers["Device"].first,
+            osName: headers["OS-Name"].first,
+            osVersion: headers["OS-Version"].first
+        )
+    }
 }
 
-extension Feedback: CustomStringConvertible {
+struct ContextualizedFeedback {
+    let feedback: Feedback
+    let appVersion: String?
+    let customer: String?
+    let device: String?
+    let osName: String?
+    let osVersion: String?
+}
+
+extension ContextualizedFeedback: CustomStringConvertible {
     var description: String {
         return """
+App Version: \(appVersion ?? "Unknown")
+Customer ID: \(customer ?? "Unknown")
 Date: \(Date())
-Reason: \(reason)
-Language: \(language)
-Mail: \(email ?? "Unknown")
-Message: \(message)
+Device: \(device ?? "Unknown")
+Language: \(feedback.language)
+Mail: \(feedback.email ?? "Unknown")
+OS Name: \(osName ?? "Unknown")
+OS Version: \(osVersion ?? "Unknown")
+----
+Reason: \(feedback.reason)
+Message: \(feedback.message)
 """
     }
 }
