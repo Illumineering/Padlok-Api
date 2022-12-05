@@ -19,13 +19,12 @@ extension DirectoryConfiguration {
 }
 
 extension Environment {
+    var shouldWriteFile: Bool {
+        self == .production
+    }
+
     var shouldSendMail: Bool {
-        switch self {
-        case .testing:
-            return false
-        default:
-            return true
-        }
+        self != .testing
     }
 }
 
