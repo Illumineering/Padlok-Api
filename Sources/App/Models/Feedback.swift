@@ -17,7 +17,7 @@ struct Feedback: Content {
         case feedback, feature, bug, help, other
     }
 
-    let language: Language
+    let language: String
     let reason: Reason
     let email: String?
     let message: String

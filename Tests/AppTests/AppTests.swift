@@ -141,19 +141,6 @@ final class AppTests: XCTestCase {
             XCTAssertEqual(try res.content.decode(ErrorResponse.self), ErrorResponse(error: true, reason: "Value required for key \'language\'."))
         })
 
-        // Unsupported value for language key
-        try app.test(.POST, "feedback", beforeRequest: { req in
-            try req.content.encode([
-                "reason": "other",
-                "language": "zh",
-                "email": "test@test.fr",
-                "message": "a message",
-            ])
-        }, afterResponse: { res in
-            XCTAssertEqual(res.status, .badRequest)
-            XCTAssertEqual(try res.content.decode(ErrorResponse.self), ErrorResponse(error: true, reason: "Cannot initialize Language from invalid String value zh for key language"))
-        })
-
         // Missing required message key
         try app.test(.POST, "feedback", beforeRequest: { req in
             try req.content.encode([
