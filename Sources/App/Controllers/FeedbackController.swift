@@ -16,7 +16,7 @@ struct FeedbackController: RouteCollection {
 
     private func registerFeedback(req: Request) async throws -> Response {
         // Always decode first, otherwise error will not throw in tests, because shouldSendMail == false
-        var feedback = try req.content.decode(Feedback.self).enrich(using: req.headers)
+        let feedback = try req.content.decode(Feedback.self).enrich(using: req.headers)
 
         // Save a file
         if req.application.environment.shouldWriteFile {
