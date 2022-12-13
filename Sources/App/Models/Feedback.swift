@@ -39,6 +39,7 @@ struct Feedback: Content {
             appVersion: headers["App-Version"].first,
             customer: headers["Customer-Identifier"].first,
             device: headers["Device"].first,
+            downloadDate: headers["Download-Date"].first,
             osName: headers["OS-Name"].first,
             osVersion: headers["OS-Version"].first
         )
@@ -50,6 +51,7 @@ struct ContextualizedFeedback {
     let appVersion: String?
     let customer: String?
     let device: String?
+    let downloadDate: String?
     let osName: String?
     let osVersion: String?
 }
@@ -61,6 +63,7 @@ App Version: \(appVersion ?? "Unknown")
 Customer ID: \(customer ?? "Unknown")
 Date: \(Date())
 Device: \(device ?? "Unknown")
+Download date: \(downloadDate ?? "Unknown")
 Language: \(feedback.language)
 Mail: \(feedback.email ?? "Unknown")
 OS Name: \(osName ?? "Unknown")
