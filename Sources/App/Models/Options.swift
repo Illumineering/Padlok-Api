@@ -13,20 +13,27 @@ struct Options: Content, Equatable {
     struct URLs: Content, Equatable {
         let appstore: URL
         let faq: URL
+        let instagram: URL
         let marketing: URL
+        let mastodon: URL
         let privacy: URL
         let support: URL
         let terms: URL
         let twitter: URL
 
         static func adapted(for language: Language) -> URLs {
+            let instagram: URL = "https://www.instagram.com/padlok.app"
+            let mastodon: URL = "https://indieapps.space/@padlok"
             let twitter: URL = "https://twitter.com/PadlokApp"
+
             switch language {
             case .english:
                 return .init(
                     appstore: "https://apps.apple.com/us/app/padlok/id1546719801",
                     faq: "https://padlok.app/frequently-asked-questions/",
+                    instagram: instagram,
                     marketing: "https://padlok.app",
+                    mastodon: mastodon,
                     privacy: "https://padlok.app/privacy",
                     support: "https://padlok.app/support",
                     terms: "https://padlok.app/terms",
@@ -36,7 +43,9 @@ struct Options: Content, Equatable {
                 return .init(
                     appstore: "https://apps.apple.com/fr/app/padlok/id1546719801",
                     faq: "https://padlok.app/fr/foire-aux-questions/",
+                    instagram: instagram,
                     marketing: "https://padlok.app/fr",
+                    mastodon: mastodon,
                     privacy: "https://padlok.app/fr/confidentialite",
                     support: "https://padlok.app/fr/assistance",
                     terms: "https://padlok.app/fr/conditions",
