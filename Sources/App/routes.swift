@@ -21,6 +21,11 @@ func routes(_ app: Application) throws {
         return Options.adapted(for: .from(headers: req.headers))
     }
 
+    // Added FAQ
+    app.on(.GET, "faq") { req in
+        return Options.adapted(for: .from(headers: req.headers)).faq
+    }
+
     // Retreiving feedback from users
     try app.register(collection: FeedbackController())
 
