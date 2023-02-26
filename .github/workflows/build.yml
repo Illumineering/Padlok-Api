@@ -18,7 +18,9 @@ jobs:
       - name: Build release
         run: swift build -c release -v
       - name: Archive builds
+        run: tar -czvf build.tar.gz .build
+      - name: Upload builds archive
         uses: actions/upload-artifact@v3
         with:
-          name: builds
-          path: .build
+          name: build
+          path: build.tar.gz
