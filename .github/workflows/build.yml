@@ -18,8 +18,7 @@ jobs:
       - name: Build release
         run: swift build -c release -v
       - name: Archive builds
-        run: cd .build && tar -czf ../build.tar.gz x86_64-unknown-linux-gnu debug.yaml debug release.yaml release
-        run: tar -czvf build.tar.gz .build/
+        run: cd .build && tar -czvf ../build.tar.gz x86_64-unknown-linux-gnu debug.yaml debug release.yaml release
       - name: Upload builds archive
         uses: actions/upload-artifact@v3
         with:
