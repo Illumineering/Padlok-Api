@@ -17,7 +17,7 @@ jobs:
       - name: Build release
         run: swift build -c release -v
       - name: Pack release
-        run: mkdir dist && mv x86_64-unknown-linux-gnu dist/ && mv debug dist/ && mv release dist/
+        run: mkdir dist && mv .build/x86_64-unknown-linux-gnu dist/ && mv .build/debug* dist/ && mv .build/release* dist/
       - name: Rsync deploy
         uses: Burnett01/rsync-deployments@5.2.1
         with:
