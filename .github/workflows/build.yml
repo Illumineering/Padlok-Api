@@ -18,21 +18,11 @@ jobs:
         run: swift build -c release -v
       - name: Pack release
         run: mkdir dist && mv .build/x86_64-unknown-linux-gnu dist/ && mv .build/debug* dist/ && mv .build/release* dist/
-      - name: Rsync deploy
-        uses: Burnett01/rsync-deployments@5.2.1
-        with:
-          switches: -avzr --delete
-          path: Public/
-          remote_path: ${{ secrets.DEPLOY_PATH }}/Public
-          remote_host: ${{ secrets.DEPLOY_HOST }}
-          remote_port: ${{ secrets.DEPLOY_PORT }}
-          remote_user: ${{ secrets.DEPLOY_USER }}
-          remote_key: ${{ secrets.DEPLOY_KEY }}
       - uses: Burnett01/rsync-deployments@5.2.1
         with:
           switches: -avzr --delete
           path: dist/
-          remote_path: ${{ secrets.DEPLOY_PATH }}/.build
+          remote_path: ${{ secrets.DEPLOY_PATH }}
           remote_host: ${{ secrets.DEPLOY_HOST }}
           remote_port: ${{ secrets.DEPLOY_PORT }}
           remote_user: ${{ secrets.DEPLOY_USER }}
