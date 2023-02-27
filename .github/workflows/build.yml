@@ -1,4 +1,4 @@
-name: Deploy
+name: Build Vapor
 
 on:
   push:
@@ -7,7 +7,6 @@ on:
 
 jobs:
   build:
-    name: Test, Build, Deploy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -17,10 +16,24 @@ jobs:
         run: swift build -v
       - name: Build release
         run: swift build -c release -v
-      - name: Archive builds
-        run: cd .build && tar -czvf ../build.tar.gz x86_64-unknown-linux-gnu debug.yaml debug release.yaml release
-      - name: Upload builds archive
-        uses: actions/upload-artifact@v3
+      - name: Pack release
+        run: mkdir dist && mv x86_64-unknown-linux-gnu dist/ && mv debug dist/ && mv release dist/
+      - name: Rsync deploy
+        uses: Burnett01/rsync-deployments@5.2.1
         with:
-          name: build
-          path: build.tar.gz
+          switches: -avzr --delete
+          path: Public/
+          remote_path: ${{ secrets.DEPLOY_PATH }}/Public
+          remote_host: ${{ secrets.DEPLOY_HOST }}
+          remote_port: ${{ secrets.DEPLOY_PORT }}
+          remote_user: ${{ secrets.DEPLOY_USER }}
+          remote_key: ${{ secrets.DEPLOY_KEY }}
+      - uses: Burnett01/rsync-deployments@5.2.1
+        with:
+          switches: -avzr --delete
+          path: dist/
+          remote_path: ${{ secrets.DEPLOY_PATH }}/.build
+          remote_host: ${{ secrets.DEPLOY_HOST }}
+          remote_port: ${{ secrets.DEPLOY_PORT }}
+          remote_user: ${{ secrets.DEPLOY_USER }}
+          remote_key: ${{ secrets.DEPLOY_KEY }}
