@@ -20,7 +20,7 @@ jobs:
         run: mkdir dist && mv .build/x86_64-unknown-linux-gnu dist/ && mv .build/debug* dist/ && mv .build/release* dist/
       - uses: Burnett01/rsync-deployments@5.2.1
         with:
-          switches: -avzr --delete
+          switches: -avzr --delete --exclude '.env.*'
           path: dist/
           remote_path: ${{ secrets.DEPLOY_PATH }}
           remote_host: ${{ secrets.DEPLOY_HOST }}
