@@ -13,7 +13,7 @@ jobs:
       - name: Run tests
         run: swift test -v
       - name: Build debug
-        run: swift build -static-stdlib -static-executable -v
+        run: swift build -static-stdlib -static-executable -c debug -v
       - name: Build release
         run: swift build -static-stdlib -static-executable -c release -v
       - name: Pack release
