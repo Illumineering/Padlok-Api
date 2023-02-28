@@ -1,4 +1,7 @@
 
+# PhpStorm
+.idea
+
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php
@@ -19,5 +22,7 @@
 .phpunit.result.cache
 ###< phpunit/phpunit ###
 
-# PhpStorm
-.idea
+###> friendsofphp/php-cs-fixer ###
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###
