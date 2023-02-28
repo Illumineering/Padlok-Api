@@ -13,9 +13,9 @@ jobs:
       - name: Run tests
         run: swift test -v
       - name: Build debug
-        run: swift build -v
+        run: swift build -static-stdlib -static-executable -v
       - name: Build release
-        run: swift build -c release -v
+        run: swift build -static-stdlib -static-executable -c release -v
       - name: Pack release
         run: mkdir dist && mv .build/x86_64-unknown-linux-gnu dist/ && mv .build/debug* dist/ && mv .build/release* dist/
       - uses: Burnett01/rsync-deployments@5.2.1
