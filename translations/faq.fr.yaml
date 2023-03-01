@@ -1,0 +1,48 @@
+faq:
+  category:
+    getting_started: 'Commencer'
+    notifications: 'Notifications'
+    sharing: 'Partage'
+    privacy: 'Confidentialité'
+    premium: 'Premium'
+
+  add_address:
+    question: 'Comment ajouter une adresse à Padlok ?'
+    answer: 'Commencez par tapper le bouton + sur l’écran principal. Vous pouvez ensuite soit trouver une adresse avec le champ de recherche, ou sélectionnez une adresse depuis l’un de vos contacts.'
+  no_codes:
+    question: 'Pourquoi mon adresse n’a aucun code associé ?'
+    answer: 'Padlok prend la confidentialité des données très au sérieux. Pour cette raison, l’app ne connait que les codes que vous entrez. Elle n’utilisera jamais une base de donnée partagée, ni n’alimentera une telle base avec vos données. Vos données sont les votre, et le resteront.'
+
+  enable_notifications:
+    question: 'Comment activer les notifications ?'
+    answer: 'Après avoir ajouté au moins une adresse, activez le bouton labellisé “Me prévenir à proximité”. Le cas échéant, vous devez autoriser l’application à vous localiser, et à vous envoyer des notifications.'
+  notification_timing:
+    question: 'Quand les notifications sont-elle envoyées ?'
+    answer: 'Les notifications vont être envoyées lorsque l’application détectera que vous êtes suffisamment près de l’adresse associée. Pour améliorer la précision, passez l’autorisation de l’application à vous localiser sur “Toujours”.'
+  notification_failure:
+    question: 'Je n’ai pas été notifié alors que j’aurai dû. Que s’est-il passé ?'
+    answer: 'Les notification utilisent le géo-repérage d’iOS ; qui réveillera l’application lorsque vous entrez dans une zone pré-définie autour de l’adresse. Padlok ne connait pas votre position à chaque instant, elle se contente d’attendre que le système la réveille, ce qui peut ne pas arriver, généralement parce que la précision de la localisation n’est pas suffisante, ou que le mode “Économie d’énergie” est activé ; ou encore que les actualisations en arrière plan ne sont pas actives. Assurez-vous de ne pas avoir de message d’alerte sous le bouton d’activation des notifications. Si c’est le cas, il est probable que les notifications ne fonctionnent pas correctement.'
+
+  share_no_padlok:
+    question: 'Puis-je partager les informations d’une adresse à quelqu’un qui n’a pas installé Padlok ?'
+    answer: 'Bien sûr ! Le partage utilise un lien qui fonctionne pour n’importe qui avec une connexion internet, et un navigateur à jour. Sur iOS, un “Extrait d’app” s’ouvrira avec une expérience native qui suggèrera l’installation de l’application complète pour enregistrer les codes sur leur appareil.'
+  update_share_info:
+    question: 'Un code a changé, puis-je mettre à jour un lien déjà partagé ?'
+    answer: 'Oui ! L’application va vous le proposer. Vous aurez alors deux choix pour modifier le lien : le mettre à jour, rendant les nouveaux codes disponibles sans modifier le lien ; ou de le re-générer de façon à ce que l’ancien lien devienne inutilisable. La seconde option est adaptée si vous ne souhaitez pas que les personnes à qui vous avez envoyé le lien puissent accéder aux nouvelles informations.'
+
+  collected_data:
+    question: 'Quelles sont les données collectées par Padlok ?'
+    answer: 'Padlok vous demande l’authorisation de vous géolocaliser. Mais cette localisation n’est utilisée que par l’application sur votre appareil, et n’est jamais envoyée au monde extérieur. Les seule données que Padlok récupère sont anonymisées, et sont soit dans un but de gestion et analyse des achats, ou pour assurer la qualité de l’application et de ses performances. Padlok n’organise pas la récolte de données personnelles, de vos adresses, ou de vos informations associées.'
+  stored_data:
+    question: 'Où mes données sont-elles stockées, et sont-elles accessibles par quiconque ?'
+    answer: 'Les données de l’application sont stockées sur votre appareil, et dans iCloud si ce dernier est activé. Seuls vos appareils connectés au même compte iCloud peuvent accéder à ces informations. Personne d’autre.'
+  stored_shared_data:
+    question: 'Comment sont stockées les données partagées par un lien ?'
+    answer: 'Pas d’une façon exploitable. Lorsque vous générez un lien de partage, vos données sont chiffrées *sur votre appareil*, et ensuite envoyées sur mes serveurs en France. La clé de chiffrement est inclue dans l’url. Sans cette url, il est impossible d’accéder à vos données. Je ne peux pas accéder à vos données, et personne d’autre ne le pourrait. Lorsqu’un lien est ouvert, soit l’application, ou le site va déchiffrer les données renvoyées par mon serveur *sur votre appareil*. Par conséquent, il s’agit d’un chiffrement bout en bout.'
+
+  end_of_subscription:
+    question: 'Que se passe-t-il lorsque mon abonnement prend fin ?'
+    answer: 'À la fin de votre abonnement, vous perdrez tous les avantages Premium qui y sont attachés. Si vous avez plus de trois adresses, vous ne pourrez consulter que les trois plus proches ; vous ne perdez donc aucune de vos données. Vous serez toujours libre de supprimer n’importe quelle adresse.'
+  upgrade_to_lifetime:
+    question: 'Puis-je passer à un abonnement à vie avant la fin de mon abonnement annuel ?'
+    answer: 'Oui ! Tout d’abord, vous devrez annuler le renouvellement de votre abonnement, ensuite, un bouton “Conserver à vie” sera disponible sur l’écran à propos à tarif réduit.'
