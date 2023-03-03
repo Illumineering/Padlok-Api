@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Api;
 
-use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
+use App\Tests\Abstract\LocalizedApiTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Symfony\Component\HttpClient\HttpOptions;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
-class GetFaqTest extends ApiTestCase
+final class GetFaqTest extends LocalizedApiTestCase
 {
     /**
      * @var array<string, mixed>
@@ -65,26 +64,8 @@ class GetFaqTest extends ApiTestCase
 
     private function getFaq(string $language): ResponseInterface
     {
-        $options = new HttpOptions();
-        $options->setHeaders(['Accept-Language' => $language]);
-
         $client = self::createClient();
 
-        return $client->request('GET', 'faq', $options->toArray());
-    }
-
-    public static function getEnglishAcceptLanguage(): \Generator
-    {
-        yield ['en'];
-        yield ['en-US'];
-        yield ['en-GB'];
-        yield ['de']; // Fallback to english
-    }
-
-    public static function getFrenchAcceptLanguage(): \Generator
-    {
-        yield ['fr'];
-        yield ['fr-FR'];
-        yield ['fr-CA'];
+        return $client->request('GET', 'faq', $this->getLocalizedHeader($language));
     }
 }

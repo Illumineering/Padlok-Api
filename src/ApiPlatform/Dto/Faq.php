@@ -6,7 +6,6 @@ namespace App\ApiPlatform\Dto;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
-use App\ApiPlatform\Dto\Faq\Question;
 use App\ApiPlatform\State\FaqProvider;
 
 #[ApiResource(
@@ -21,10 +20,12 @@ use App\ApiPlatform\State\FaqProvider;
 final class Faq
 {
     /**
-     * @param array<Question> $questions
+     * @var array<Question>
      */
-    public function __construct(
-        public readonly array $questions
-    ) {
+    public readonly array $questions;
+
+    public function __construct()
+    {
+        $this->questions = Question::cases();
     }
 }

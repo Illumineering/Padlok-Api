@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\ApiPlatform\Dto\Faq;
+namespace App\ApiPlatform\Dto;
 
 use Symfony\Contracts\Translation\TranslatorInterface;
 

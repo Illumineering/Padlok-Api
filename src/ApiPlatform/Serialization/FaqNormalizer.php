@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\ApiPlatform\Serialization;
 
 use App\ApiPlatform\Dto\Faq;
+use App\ApiPlatform\Dto\Question;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class FaqNormalizer implements NormalizerInterface
+final class FaqNormalizer implements NormalizerInterface
 {
     public function __construct(
         private readonly QuestionNormalizer $normalizer,
@@ -21,7 +22,7 @@ class FaqNormalizer implements NormalizerInterface
     {
         assert($object instanceof Faq);
 
-        return array_map(function (Faq\Question $item) use ($format, $context) {
+        return array_map(function (Question $item) use ($format, $context) {
             return $this->normalizer->normalize($item, $format, $context);
         }, $object->questions);
     }

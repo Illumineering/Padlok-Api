@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\ApiPlatform\Serialization;
 
-use App\ApiPlatform\Dto\Faq\Question;
+use App\ApiPlatform\Dto\Question;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class QuestionNormalizer implements NormalizerInterface
+final class QuestionNormalizer implements NormalizerInterface
 {
     public function __construct(
         private readonly TranslatorInterface $translator,

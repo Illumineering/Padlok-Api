@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\ApiPlatform\Serialization;
 
-use App\ApiPlatform\Dto\Category;
+use App\ApiPlatform\Dto\Links;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class CategoryNormalizer implements NormalizerInterface
+final class LinksNormalizer implements NormalizerInterface
 {
     public function __construct(
         private readonly TranslatorInterface $translator,
@@ -20,12 +20,13 @@ final class CategoryNormalizer implements NormalizerInterface
      */
     public function normalize(mixed $object, string $format = null, array $context = [])
     {
-        assert($object instanceof Category);
+        assert($object instanceof Links);
+        $urls = [];
+        foreach ($object->urls as $url) {
+            $urls[$url->value] = $url->getUrl($this->translator);
+        }
 
-        return [
-            'name' => $object->getName($this->translator),
-            'icon' => $object->getIcon(),
-        ];
+        return $urls;
     }
 
     /**
@@ -33,6 +34,6 @@ final class CategoryNormalizer implements NormalizerInterface
      */
     public function supportsNormalization(mixed $data, string $format = null): bool
     {
-        return $data instanceof Category;
+        return $data instanceof Links;
     }
 }

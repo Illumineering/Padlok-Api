@@ -21,6 +21,6 @@ final class FaqProvider implements ProviderInterface
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): Faq
     {
-        return new Faq(Faq\Question::cases());
+        return new Faq();
     }
 }
