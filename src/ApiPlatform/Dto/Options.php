@@ -13,6 +13,11 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 #[ApiResource(
     operations: [
         new GetCollection(
+            openapiContext: [
+                'tags' => ['Metadata'],
+                'summary' => 'Get app parameters, including Faq, Links and Sentry rates',
+                'description' => '',
+            ],
             paginationEnabled: false,
             provider: OptionsProvider::class,
         ),

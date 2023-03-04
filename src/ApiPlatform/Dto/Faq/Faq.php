@@ -12,6 +12,11 @@ use App\ApiPlatform\State\FaqProvider;
     uriTemplate: 'faq',
     operations: [
         new GetCollection(
+            openapiContext: [
+                'tags' => ['Metadata'],
+                'summary' => 'Get frequently asked question; and associated answers',
+                'description' => '',
+            ],
             paginationEnabled: false,
             provider: FaqProvider::class,
         ),

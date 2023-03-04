@@ -20,6 +20,9 @@ use function Safe\date;
             status: Response::HTTP_OK,
             controller: SendFeedback::class,
             openapiContext: [
+                'tags' => ['Support'],
+                'summary' => 'Send a feedback',
+                'description' => '',
                 'parameters' => [
                     [
                         'name' => 'App-Version',
