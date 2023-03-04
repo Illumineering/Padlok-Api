@@ -1,0 +1,40 @@
+name: Deploy in production
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.1
+          tools: composer
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
+
+      - name: Build the stack
+        run: docker-compose up -d
+
+      - name: Tests
+        run: composer test
+
+      - name: Remove dev dependencies
+        run: composer install --no-dev --prefer-dist --no-progress --no-suggest
+
+      - name: Rsync deploy
+        uses: Burnett01/rsync-deployments@5.2.1
+        with:
+          switches: -avzr --delete --exclude '.env.local' --exclude '.env.*.local'
+          path: /
+          remote_path: ${{ secrets.DEPLOY_PATH_PROD }}
+          remote_host: ${{ secrets.DEPLOY_HOST }}
+          remote_port: ${{ secrets.DEPLOY_PORT }}
+          remote_user: ${{ secrets.DEPLOY_USER }}
+          remote_key: ${{ secrets.DEPLOY_KEY }}
