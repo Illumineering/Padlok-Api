@@ -55,11 +55,16 @@ use function Safe\date;
                         'type' => 'string',
                     ],
                 ],
+                'responses' => [
+                    Response::HTTP_OK => ['description' => 'Feedback sent'],
+                    Response::HTTP_BAD_REQUEST => ['description' => 'Invalid input'],
+                    Response::HTTP_UNPROCESSABLE_ENTITY => ['description' => 'Unprocessable entity'],
+                ],
             ],
-            normalizationContext: ['groups' => ['read']],
-            denormalizationContext: ['groups' => ['write']],
         ),
     ],
+    normalizationContext: ['groups' => ['read']],
+    denormalizationContext: ['groups' => ['write']],
 )]
 final class Feedback
 {
