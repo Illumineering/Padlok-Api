@@ -26,15 +26,15 @@ jobs:
         run: composer test
 
       - name: Remove dev dependencies
-        run: APP_ENV=prod APP_DEBUG=0 composer install --no-dev --optimize-autoloader --prefer-dist --no-progress --no-suggest
+        run: APP_ENV=prod APP_DEBUG=1 composer install --no-dev --optimize-autoloader --prefer-dist --no-progress --no-suggest
 
-      - name: Warm cache
-        run: rm -rf var/cache/* && APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear
+      - name: Warm caches
+        run: APP_ENV=prod APP_DEBUG=1 ./bin/console cache:clear
 
       - name: Rsync deploy
         uses: Burnett01/rsync-deployments@5.2.1
         with:
-          switches: -avzr --delete --chown=${{ secrets.DEPLOY_USER }}:www-data --exclude '.env.local' --exclude '.env.*.local'
+          switches: -avzr --delete -exclude 'var/log' --exclude '.env.local' --exclude '.env.*.local'
           path: /
           remote_path: ${{ secrets.DEPLOY_PATH_DEV }}
           remote_host: ${{ secrets.DEPLOY_HOST }}
