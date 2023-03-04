@@ -14,8 +14,8 @@ use App\ApiPlatform\State\FaqProvider;
         new GetCollection(
             openapiContext: [
                 'tags' => ['Metadata'],
-                'summary' => 'Get frequently asked question; and associated answers',
-                'description' => '',
+                'summary' => 'Get Frequently Asked Questions',
+                'description' => 'Get frequently asked questions; and associated answers',
             ],
             paginationEnabled: false,
             provider: FaqProvider::class,

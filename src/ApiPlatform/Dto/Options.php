@@ -15,8 +15,8 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
         new GetCollection(
             openapiContext: [
                 'tags' => ['Metadata'],
-                'summary' => 'Get app parameters, including Faq, Links and Sentry rates',
-                'description' => '',
+                'summary' => 'Get App Parameters',
+                'description' => 'Get app parameters, including faq, external links and Sentry rates',
             ],
             paginationEnabled: false,
             provider: OptionsProvider::class,
