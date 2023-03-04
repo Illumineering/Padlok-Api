@@ -13,5 +13,5 @@ api_platform:
       - 'text/html'
   name_converter: 'Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter'
   enable_docs: '%env(bool:APP_DEBUG)%'
-  enable_swagger: '%env(bool:APP_DEBUG)%'
-  enable_swagger_ui: '%env(bool:APP_DEBUG)%'
+  enable_swagger: '%env(bool:SWAGGER_ENABLED)%'
+  enable_swagger_ui: '%env(bool:SWAGGER_ENABLED)%'
