@@ -11,6 +11,7 @@ use Faker\Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpClient\HttpOptions;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 use Zenstruck\Foundry\Test\Factories;
 
@@ -31,12 +32,29 @@ final class SendFeedbackTest extends ApiTestCase
         // TODO: assert mail have been sent
     }
 
+    /**
+     * @param array<string, string> $feedback
+     */
+    #[Test]
+    #[DataProvider('provideInvalidFeedback')]
+    public function sendInvalidFeedback(int $expectedResponseCode, array $feedback): void
+    {
+        $this->sendFeedback($feedback, []);
+        $this->assertResponseStatusCodeSame($expectedResponseCode);
+    }
+
     public static function provideValidFeedback(): \Generator
     {
         yield [self::generateFeedback(withEmail: false), []];
         yield [self::generateFeedback(withEmail: false), self::generateHeaders()];
         yield [self::generateFeedback(withEmail: true), []];
         yield [self::generateFeedback(withEmail: true), self::generateHeaders()];
+    }
+
+    public static function provideInvalidFeedback(): \Generator
+    {
+        yield [Response::HTTP_UNPROCESSABLE_ENTITY, ['email' => 'invalid'] + self::generateFeedback(false)];
+        yield [Response::HTTP_UNPROCESSABLE_ENTITY, ['message' => ''] + self::generateFeedback(false)];
     }
 
     private static function faker(): Generator
