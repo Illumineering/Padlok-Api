@@ -6,6 +6,7 @@ namespace App\ApiPlatform\Dto;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use App\ApiPlatform\Dto\Faq\Faq;
 use App\ApiPlatform\State\OptionsProvider;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 

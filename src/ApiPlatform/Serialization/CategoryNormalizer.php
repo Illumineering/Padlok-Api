@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\ApiPlatform\Serialization;
 
-use App\ApiPlatform\Dto\Category;
+use App\ApiPlatform\Dto\Faq\Category;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 

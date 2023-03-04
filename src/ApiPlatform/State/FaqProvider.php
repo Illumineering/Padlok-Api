@@ -6,7 +6,7 @@ namespace App\ApiPlatform\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
-use App\ApiPlatform\Dto\Faq;
+use App\ApiPlatform\Dto\Faq\Faq;
 
 /**
  * @implements ProviderInterface<Faq>

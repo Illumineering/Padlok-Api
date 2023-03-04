@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\ApiPlatform\Serialization;
 
-use App\ApiPlatform\Dto\Faq;
-use App\ApiPlatform\Dto\Question;
+use App\ApiPlatform\Dto\Faq\Faq;
+use App\ApiPlatform\Dto\Faq\Question;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 final class FaqNormalizer implements NormalizerInterface
