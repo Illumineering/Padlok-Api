@@ -11,17 +11,17 @@ use App\ApiPlatform\State\OptionsProvider;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ApiResource(
-    uriTemplate: 'options',
     operations: [
-        new GetCollection(),
+        new GetCollection(
+            openapiContext: [
+                'tags' => ['Metadata'],
+                'summary' => 'Get App Parameters',
+                'description' => 'Get app parameters, including faq, external links and Sentry rates',
+            ],
+            paginationEnabled: false,
+            provider: OptionsProvider::class,
+        ),
     ],
-    openapiContext: [
-        'tags' => ['Metadata'],
-        'summary' => 'Get App Parameters',
-        'description' => 'Get app parameters, including faq, external links and Sentry rates',
-    ],
-    paginationEnabled: false,
-    provider: OptionsProvider::class,
 )]
 final class Options
 {
