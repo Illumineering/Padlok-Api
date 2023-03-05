@@ -6,22 +6,27 @@ namespace App\ApiPlatform\Dto;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\HttpOperation;
 use App\ApiPlatform\Dto\Faq\Faq;
 use App\ApiPlatform\State\OptionsProvider;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ApiResource(
+    uriTemplate: 'options',
     operations: [
-        new GetCollection(
-            openapiContext: [
-                'tags' => ['Metadata'],
-                'summary' => 'Get App Parameters',
-                'description' => 'Get app parameters, including faq, external links and Sentry rates',
-            ],
-            paginationEnabled: false,
-            provider: OptionsProvider::class,
+        new GetCollection(),
+        new HttpOperation(
+            method: HttpOperation::METHOD_OPTIONS,
+            output: Options::class,
         ),
     ],
+    openapiContext: [
+        'tags' => ['Metadata'],
+        'summary' => 'Get App Parameters',
+        'description' => 'Get app parameters, including faq, external links and Sentry rates',
+    ],
+    paginationEnabled: false,
+    provider: OptionsProvider::class,
 )]
 final class Options
 {
