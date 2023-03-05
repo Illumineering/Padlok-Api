@@ -39,8 +39,25 @@ final class SendFeedbackTest extends ApiTestCase
     #[DataProvider('provideInvalidFeedback')]
     public function sendInvalidFeedback(int $expectedResponseCode, array $feedback): void
     {
-        $this->sendFeedback($feedback, []);
+        $this->sendFeedback($feedback);
         $this->assertResponseStatusCodeSame($expectedResponseCode);
+    }
+
+    #[Test]
+    public function testRedirectionToWebsite(): void
+    {
+        $response = $this->sendFeedback($this->generateFeedback(withEmail: true), redirect: 'https://padlok.app/feedback-sent/');
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        $headers = $response->getHeaders(false);
+        $this->assertArrayHasKey('location', $headers);
+        $this->assertEquals('https://padlok.app/feedback-sent/', $headers['location'][0]);
+    }
+
+    #[Test]
+    public function testInvalidRedirection(): void
+    {
+        $this->sendFeedback($this->generateFeedback(withEmail: true), redirect: 'https://www.apple.com');
+        $this->assertResponseIsSuccessful();
     }
 
     public static function provideValidFeedback(): \Generator
@@ -108,13 +125,19 @@ final class SendFeedbackTest extends ApiTestCase
      * @param array<string, string> $feedback
      * @param array<string, string> $headers
      */
-    private function sendFeedback(array $feedback, array $headers): ResponseInterface
+    private function sendFeedback(array $feedback, array $headers = [], ?string $redirect = null, bool $json = true): ResponseInterface
     {
         $options = new HttpOptions();
         $options->setHeaders([
             'Accept' => 'application/json',
         ] + $headers);
         $options->setJson($feedback);
+
+        if ($redirect) {
+            $options->setQuery([
+                'redirect' => $redirect,
+            ]);
+        }
 
         $client = self::createClient();
 
