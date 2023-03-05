@@ -6,7 +6,6 @@ namespace App\ApiPlatform\Dto;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\HttpOperation;
 use App\ApiPlatform\Dto\Faq\Faq;
 use App\ApiPlatform\State\OptionsProvider;
 use Symfony\Component\Serializer\Annotation\SerializedName;
@@ -15,10 +14,6 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
     uriTemplate: 'options',
     operations: [
         new GetCollection(),
-        new HttpOperation(
-            method: HttpOperation::METHOD_OPTIONS,
-            output: Options::class,
-        ),
     ],
     openapiContext: [
         'tags' => ['Metadata'],
