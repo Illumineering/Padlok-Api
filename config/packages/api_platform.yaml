@@ -17,3 +17,6 @@ api_platform:
   enable_docs: '%env(bool:APP_DEBUG)%'
   enable_swagger: '%env(bool:SWAGGER_ENABLED)%'
   enable_swagger_ui: '%env(bool:SWAGGER_ENABLED)%'
+  defaults:
+    input_formats: ['json']
+    output_formats: ['json']

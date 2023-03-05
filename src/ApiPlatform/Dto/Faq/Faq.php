@@ -21,7 +21,6 @@ use App\ApiPlatform\State\FaqProvider;
             provider: FaqProvider::class,
         ),
     ],
-    formats: ['json'],
 )]
 final class Faq
 {
