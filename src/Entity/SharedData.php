@@ -83,6 +83,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             processor: SharedDataProcessor::class,
         ),
     ],
+    formats: ['json'],
 )]
 class SharedData
 {

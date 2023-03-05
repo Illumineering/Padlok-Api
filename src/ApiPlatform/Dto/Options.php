@@ -22,6 +22,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
             provider: OptionsProvider::class,
         ),
     ],
+    formats: ['json'],
 )]
 final class Options
 {

@@ -63,6 +63,8 @@ use function Safe\date;
             ],
         ),
     ],
+    inputFormats: ['json', 'form'],
+    outputFormats: ['json'],
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
 )]
