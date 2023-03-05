@@ -60,6 +60,16 @@ final class SendFeedbackTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
     }
 
+    /*
+     * TODO: Repair and enable that test ; it works manually
+    #[Test]
+    public function testSendingWwwFormEncoded(): void
+    {
+        $this->sendFeedback($this->generateFeedback(withEmail: true), json: false);
+        $this->assertResponseIsSuccessful();
+    }
+    */
+
     public static function provideValidFeedback(): \Generator
     {
         yield [self::generateFeedback(withEmail: false), []];
@@ -131,7 +141,14 @@ final class SendFeedbackTest extends ApiTestCase
         $options->setHeaders([
             'Accept' => 'application/json',
         ] + $headers);
-        $options->setJson($feedback);
+
+        if ($json) {
+            // application/json
+            $options->setJson($feedback);
+        } else {
+            // x-www-form-urlencoded
+            $options->setBody($feedback);
+        }
 
         if ($redirect) {
             $options->setQuery([
