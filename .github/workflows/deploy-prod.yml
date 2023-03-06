@@ -34,7 +34,7 @@ jobs:
       - name: Rsync deploy
         uses: Burnett01/rsync-deployments@5.2.1
         with:
-          switches: -avzr --delete --exclude '.git' --exclude 'var/log' --exclude '.env.local' --exclude '.env.*.local'
+          switches: -avzr --delete --exclude '.git' --exclude 'var/log' --exclude '.env.local' --exclude '.env.*.local' --exclude '.github' --exclude '.phpunit.cache' --exclude '.php-cs-fixer.cache'
           path: /
           remote_path: ${{ secrets.DEPLOY_PATH_PROD }}
           remote_host: ${{ secrets.DEPLOY_HOST }}
