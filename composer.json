@@ -108,7 +108,7 @@
             "bin/console -e test doctrine:database:create --no-interaction --if-not-exists",
             "bin/console -e test doctrine:migration:migrate --no-interaction --all-or-nothing --allow-no-migration",
             "bin/console -e test doctrine:fixtures:load --no-interaction",
-            "bin/phpunit"
+            "vendor/bin/phpunit"
         ],
         "lint": [
             "@sniff",
