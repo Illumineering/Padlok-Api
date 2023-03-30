@@ -43,6 +43,12 @@ final class GetFaqTest extends LocalizedApiTestCase
     }
 
     #[Test]
+    public function willFail(): void
+    {
+        $this->fail('Added to test CI');
+    }
+
+    #[Test]
     #[DataProvider('getEnglishAcceptLanguage')]
     public function getFaqInEnglish(string $language): void
     {
