@@ -50,4 +50,4 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
             cd ${{ secrets.DEPLOY_PATH_DEV }}
-            composer post-deploy
+            ./scripts/post-deploy

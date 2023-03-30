@@ -117,10 +117,6 @@
         "test": [
             "@lint",
             "@unit"
-        ],
-        "post-deploy": [
-            "bin/console -e prod doctrine:database:create --no-interaction --if-not-exists",
-            "bin/console -e prod doctrine:migration:migrate --no-interaction --all-or-nothing --allow-no-migration"
         ]
     },
     "conflict": {
