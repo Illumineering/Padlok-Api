@@ -32,7 +32,7 @@ jobs:
         run: ./vendor/bin/phpunit
 
   deploy_dev:
-    name: Deploy in production
+    name: Deploy in dev
     needs: tests
     if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-22.04
