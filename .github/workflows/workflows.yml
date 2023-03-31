@@ -47,10 +47,10 @@ jobs:
           tools: composer
 
       - name: Install dependencies
-        run: APP_ENV=prod APP_DEBUG=0 composer install --no-dev --optimize-autoloader --prefer-dist --no-progress --no-suggest
+        run: APP_ENV=prod APP_DEBUG=1 composer install --no-dev --optimize-autoloader --prefer-dist --no-progress --no-suggest
 
       - name: Warm caches
-        run: rm -r var/cache/* && APP_ENV=prod APP_DEBUG=0 ./bin/console cache:clear
+        run: rm -r var/cache/* && APP_ENV=prod APP_DEBUG=1 ./bin/console cache:clear
 
       - name: Rsync deploy
         uses: Burnett01/rsync-deployments@5.2.1
