@@ -15,7 +15,6 @@ enum Url: string
     case Privacy = 'privacy';
     case Support = 'support';
     case Terms = 'terms';
-    case Twitter = 'twitter';
 
     public function getUrl(TranslatorInterface $translator): string
     {
