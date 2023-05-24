@@ -16,9 +16,6 @@ final class QuestionNormalizer implements NormalizerInterface
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function normalize(mixed $object, string $format = null, array $context = [])
     {
         assert($object instanceof Question);
@@ -30,9 +27,6 @@ final class QuestionNormalizer implements NormalizerInterface
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function supportsNormalization(mixed $data, string $format = null): bool
     {
         return $data instanceof Question;

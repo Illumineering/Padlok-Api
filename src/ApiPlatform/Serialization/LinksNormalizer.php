@@ -15,9 +15,6 @@ final class LinksNormalizer implements NormalizerInterface
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function normalize(mixed $object, string $format = null, array $context = [])
     {
         assert($object instanceof Links);
@@ -29,9 +26,6 @@ final class LinksNormalizer implements NormalizerInterface
         return $urls;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function supportsNormalization(mixed $data, string $format = null): bool
     {
         return $data instanceof Links;

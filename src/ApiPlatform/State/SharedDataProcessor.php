@@ -24,8 +24,6 @@ final class SharedDataProcessor implements ProcessorInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
      * @param array<string, mixed> $uriVariables
      * @param array<string, mixed> $context
      */

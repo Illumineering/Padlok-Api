@@ -16,9 +16,6 @@ final class OptionsNormalizer implements NormalizerInterface
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function normalize(mixed $object, string $format = null, array $context = [])
     {
         assert($object instanceof Options);
@@ -29,9 +26,6 @@ final class OptionsNormalizer implements NormalizerInterface
         return $normalized;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function supportsNormalization(mixed $data, string $format = null): bool
     {
         return $data instanceof Options;

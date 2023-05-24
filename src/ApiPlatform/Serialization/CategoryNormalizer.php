@@ -15,9 +15,6 @@ final class CategoryNormalizer implements NormalizerInterface
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function normalize(mixed $object, string $format = null, array $context = [])
     {
         assert($object instanceof Category);
@@ -28,9 +25,6 @@ final class CategoryNormalizer implements NormalizerInterface
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function supportsNormalization(mixed $data, string $format = null): bool
     {
         return $data instanceof Category;

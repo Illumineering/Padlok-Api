@@ -27,8 +27,6 @@ final class OptionsProvider implements ProviderInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
      * @param array<string, mixed> $uriVariables
      * @param array<string, mixed> $context
      */
