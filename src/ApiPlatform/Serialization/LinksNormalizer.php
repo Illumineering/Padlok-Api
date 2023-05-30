@@ -26,6 +26,14 @@ final class LinksNormalizer implements NormalizerInterface
         return $urls;
     }
 
+    /**
+     * @return array<string, ?bool>
+     */
+    public function getSupportedTypes(?string $format): array
+    {
+        return [Links::class => true];
+    }
+
     public function supportsNormalization(mixed $data, string $format = null): bool
     {
         return $data instanceof Links;

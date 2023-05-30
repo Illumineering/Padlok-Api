@@ -26,6 +26,14 @@ final class OptionsNormalizer implements NormalizerInterface
         return $normalized;
     }
 
+    /**
+     * @return array<string, ?bool>
+     */
+    public function getSupportedTypes(?string $format): array
+    {
+        return [Options::class => true];
+    }
+
     public function supportsNormalization(mixed $data, string $format = null): bool
     {
         return $data instanceof Options;

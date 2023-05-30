@@ -25,6 +25,14 @@ final class CategoryNormalizer implements NormalizerInterface
         ];
     }
 
+    /**
+     * @return array<string, ?bool>
+     */
+    public function getSupportedTypes(?string $format): array
+    {
+        return [Category::class => true];
+    }
+
     public function supportsNormalization(mixed $data, string $format = null): bool
     {
         return $data instanceof Category;
