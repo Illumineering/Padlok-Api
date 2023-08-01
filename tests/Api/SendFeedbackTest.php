@@ -110,9 +110,13 @@ final class SendFeedbackTest extends ApiTestCase
     private static function generateFeedback(bool $withEmail, Reason $reason = null): array
     {
         $faker = self::faker();
-        $values = array_column(array_diff(Reason::cases(), [Reason::Illumineering]), 'value');
+        if (null === $reason) {
+            do {
+                $reason = $faker->randomElement(Reason::cases());
+            } while (Reason::Illumineering === $reason);
+        }
         $feedback = [
-            'reason' => $reason?->value ?? $faker->randomElement($values),
+            'reason' => $reason->value,
             'message' => $faker->paragraphs(asText: true),
         ];
         if (Reason::Illumineering === $reason) {
