@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Handler\Feedback;
 
 use App\ApiPlatform\Dto\Feedback\Feedback;
+use App\ApiPlatform\Dto\Feedback\Reason;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Mailer\MailerInterface;
@@ -23,9 +24,17 @@ final class MailFeedbackHandler implements FeedbackHandlerInterface
 
     public function handle(Feedback $feedback): void
     {
+        if (Reason::Illumineering === $feedback->reason) {
+            $from = new Address('no_reply@illumineering.fr', 'Illumineering Bot');
+            $to = 'hello@illumineering.fr'; // FIXME: maybe not hard-coding this?
+        } else {
+            $from = new Address('no_reply@padlok.app', 'Padlok Bot');
+            $to = $this->supportMail;
+        }
+
         $email = (new Email())
-            ->from(new Address('no_reply@padlok.app', 'Padlok Bot'))
-            ->to($this->supportMail)
+            ->from($from)
+            ->to($to)
             ->subject('Feedback received!')
             ->text($feedback->__toString());
 

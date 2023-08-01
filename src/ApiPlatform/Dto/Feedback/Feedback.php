@@ -80,6 +80,9 @@ final class Feedback
     #[Groups(['read', 'write'])]
     public ?string $email = null;
 
+    #[Groups(['read', 'write'])]
+    public ?string $occupation = null;
+
     #[Assert\NotBlank]
     #[Groups(['read', 'write'])]
     public string $message;
@@ -100,6 +103,7 @@ final class Feedback
             'Download date' => $this->context->downloadDate,
             'Language' => $this->context->language,
             'Mail' => $this->email,
+            'Occupation' => $this->occupation,
             'OS Name' => $this->context->osName,
             'OS Version' => $this->context->osVersion,
             'Reason' => $this->reason->value,

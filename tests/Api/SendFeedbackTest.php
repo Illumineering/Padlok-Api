@@ -54,6 +54,16 @@ final class SendFeedbackTest extends ApiTestCase
     }
 
     #[Test]
+    public function testIllumineeringFeedback(): void
+    {
+        $response = $this->sendFeedback($this->generateFeedback(withEmail: true, reason: Reason::Illumineering), redirect: 'https://illumineering.fr/feedback-sent/');
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        $headers = $response->getHeaders(false);
+        $this->assertArrayHasKey('location', $headers);
+        $this->assertEquals('https://illumineering.fr/feedback-sent/', $headers['location'][0]);
+    }
+
+    #[Test]
     public function testInvalidRedirection(): void
     {
         $this->sendFeedback($this->generateFeedback(withEmail: true), redirect: 'https://www.apple.com');
@@ -97,13 +107,16 @@ final class SendFeedbackTest extends ApiTestCase
     /**
      * @return array<string, string>
      */
-    private static function generateFeedback(bool $withEmail): array
+    private static function generateFeedback(bool $withEmail, Reason $reason = null): array
     {
         $faker = self::faker();
         $feedback = [
-            'reason' => $faker->randomElement(Reason::cases())->value,
+            'reason' => $reason?->value ?? $faker->randomElement(Reason::cases())->value,
             'message' => $faker->paragraphs(asText: true),
         ];
+        if (Reason::Illumineering === $reason) {
+            $feedback['occupation'] = $faker->jobTitle();
+        }
         if ($withEmail) {
             $email = ['email' => $faker->email()];
 
