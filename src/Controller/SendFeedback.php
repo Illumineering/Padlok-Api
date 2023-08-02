@@ -37,7 +37,7 @@ final class SendFeedback
         }
 
         if ($redirect = $request->query->get('redirect')) {
-            $website = Reason::Illumineering === $feedback->reason ? 'https://illumineering.fr/' : 'https://padlok.app/';
+            $website = Reason::Illumineering === $feedback->reason ? 'https://www.illumineering.fr/' : 'https://padlok.app/';
 
             if (str_starts_with($redirect, $website)) {
                 return new RedirectResponse($redirect);

@@ -56,11 +56,11 @@ final class SendFeedbackTest extends ApiTestCase
     #[Test]
     public function testIllumineeringFeedback(): void
     {
-        $response = $this->sendFeedback($this->generateFeedback(withEmail: true, reason: Reason::Illumineering), redirect: 'https://illumineering.fr/feedback-sent/');
+        $response = $this->sendFeedback($this->generateFeedback(withEmail: true, reason: Reason::Illumineering), redirect: 'https://www.illumineering.fr/feedback-sent/');
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
         $headers = $response->getHeaders(false);
         $this->assertArrayHasKey('location', $headers);
-        $this->assertEquals('https://illumineering.fr/feedback-sent/', $headers['location'][0]);
+        $this->assertEquals('https://www.illumineering.fr/feedback-sent/', $headers['location'][0]);
     }
 
     #[Test]
