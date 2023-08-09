@@ -7,7 +7,6 @@ namespace App\Handler\Feedback;
 use App\ApiPlatform\Dto\Feedback\Feedback;
 use App\ApiPlatform\Dto\Feedback\Reason;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
