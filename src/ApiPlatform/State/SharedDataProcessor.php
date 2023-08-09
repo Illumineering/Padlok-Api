@@ -8,12 +8,16 @@ use ApiPlatform\Metadata\DeleteOperationInterface;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\ApiPlatform\Dto\Sharing\Info;
+use App\ApiPlatform\Dto\Sharing\Output;
 use App\Entity\SharedData;
 use App\Repository\SharedDataRepository;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Uid\Uuid;
 use Tuupola\Base62;
 
+/**
+ * @implements ProcessorInterface<Output>
+ */
 final class SharedDataProcessor implements ProcessorInterface
 {
     public function __construct(
@@ -27,7 +31,7 @@ final class SharedDataProcessor implements ProcessorInterface
      * @param array<string, mixed> $uriVariables
      * @param array<string, mixed> $context
      */
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): mixed
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): ?Output
     {
         if ($operation instanceof DeleteOperationInterface) {
             assert($data instanceof SharedData);
