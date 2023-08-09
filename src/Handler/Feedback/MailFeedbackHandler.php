@@ -24,11 +24,10 @@ final class MailFeedbackHandler implements FeedbackHandlerInterface
 
     public function handle(Feedback $feedback): void
     {
+        $from = new Address('no_reply@padlok.app', 'Padlok Bot');
         if (Reason::Illumineering === $feedback->reason) {
-            $from = new Address('no_reply@illumineering.fr', 'Illumineering Bot');
             $to = 'hello@illumineering.fr'; // FIXME: maybe not hard-coding this?
         } else {
-            $from = new Address('no_reply@padlok.app', 'Padlok Bot');
             $to = $this->supportMail;
         }
 
