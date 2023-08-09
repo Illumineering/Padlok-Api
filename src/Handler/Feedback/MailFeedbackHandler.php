@@ -21,7 +21,7 @@ final class MailFeedbackHandler implements FeedbackHandlerInterface
 
     public function handle(Feedback $feedback): void
     {
-        $from = new Address('no_reply@illumineering.fr', 'Illumineering Bot');
+        $from = new Address('bot@illumineering.fr', 'Illumineering Bot');
         if (Reason::Illumineering === $feedback->reason) {
             $to = 'hello@illumineering.fr'; // FIXME: maybe not hard-coding this?
         } else {
