@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Handler\Feedback;
 
 use App\ApiPlatform\Dto\Feedback\Feedback;
-use App\ApiPlatform\Dto\Feedback\Reason;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
@@ -21,12 +20,8 @@ final class MailFeedbackHandler implements FeedbackHandlerInterface
 
     public function handle(Feedback $feedback): void
     {
-        $from = new Address('bot@illumineering.fr', 'Illumineering Bot');
-        if (Reason::Illumineering === $feedback->reason) {
-            $to = 'hello@illumineering.fr'; // FIXME: maybe not hard-coding this?
-        } else {
-            $to = 'padlok@illumineering.fr';
-        }
+        $from = new Address('bot@illumineering.fr', 'Illumineering Bot (legacy)');
+        $to = 'padlok@illumineering.fr';
 
         $email = (new Email())
             ->from($from)

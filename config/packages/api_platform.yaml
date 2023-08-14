@@ -9,8 +9,6 @@ api_platform:
   formats:
     json:
       - 'application/json'
-    form:
-      - 'application/x-www-form-urlencoded'
     html:
       - 'text/html'
   name_converter: 'Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter'

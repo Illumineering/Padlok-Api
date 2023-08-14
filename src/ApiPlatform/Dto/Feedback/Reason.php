@@ -10,7 +10,6 @@ enum Reason: string
     case Feedback = 'feedback';
     case Feature = 'feature';
     case Help = 'help';
-    case Illumineering = 'illumineering';
     case Pro = 'pro';
     case Other = 'other';
 }

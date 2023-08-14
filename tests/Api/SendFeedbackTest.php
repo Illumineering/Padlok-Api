@@ -43,43 +43,6 @@ final class SendFeedbackTest extends ApiTestCase
         $this->assertResponseStatusCodeSame($expectedResponseCode);
     }
 
-    #[Test]
-    public function testRedirectionToWebsite(): void
-    {
-        $response = $this->sendFeedback($this->generateFeedback(withEmail: true), redirect: 'https://padlok.app/feedback-sent/');
-        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $headers = $response->getHeaders(false);
-        $this->assertArrayHasKey('location', $headers);
-        $this->assertEquals('https://padlok.app/feedback-sent/', $headers['location'][0]);
-    }
-
-    #[Test]
-    public function testIllumineeringFeedback(): void
-    {
-        $response = $this->sendFeedback($this->generateFeedback(withEmail: true, reason: Reason::Illumineering), redirect: 'https://www.illumineering.fr/feedback-sent/');
-        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $headers = $response->getHeaders(false);
-        $this->assertArrayHasKey('location', $headers);
-        $this->assertEquals('https://www.illumineering.fr/feedback-sent/', $headers['location'][0]);
-    }
-
-    #[Test]
-    public function testInvalidRedirection(): void
-    {
-        $this->sendFeedback($this->generateFeedback(withEmail: true), redirect: 'https://www.apple.com');
-        $this->assertResponseIsSuccessful();
-    }
-
-    /*
-     * TODO: Repair and enable that test ; it works manually
-    #[Test]
-    public function testSendingWwwFormEncoded(): void
-    {
-        $this->sendFeedback($this->generateFeedback(withEmail: true), json: false);
-        $this->assertResponseIsSuccessful();
-    }
-    */
-
     public static function provideValidFeedback(): \Generator
     {
         yield [self::generateFeedback(withEmail: false), []];
@@ -107,21 +70,13 @@ final class SendFeedbackTest extends ApiTestCase
     /**
      * @return array<string, string>
      */
-    private static function generateFeedback(bool $withEmail, Reason $reason = null): array
+    private static function generateFeedback(bool $withEmail): array
     {
         $faker = self::faker();
-        if (null === $reason) {
-            do {
-                $reason = $faker->randomElement(Reason::cases());
-            } while (Reason::Illumineering === $reason);
-        }
         $feedback = [
-            'reason' => $reason->value,
+            'reason' => $faker->randomElement(Reason::cases())->value,
             'message' => $faker->paragraphs(asText: true),
         ];
-        if (Reason::Illumineering === $reason) {
-            $feedback['occupation'] = $faker->jobTitle();
-        }
         if ($withEmail) {
             $email = ['email' => $faker->email()];
 

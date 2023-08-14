@@ -6,10 +6,8 @@ namespace App\Controller;
 
 use ApiPlatform\Validator\ValidatorInterface;
 use App\ApiPlatform\Dto\Feedback\Feedback;
-use App\ApiPlatform\Dto\Feedback\Reason;
 use App\Handler\Feedback\FeedbackHandlerInterface;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -34,14 +32,6 @@ final class SendFeedback
 
         foreach ($this->handlers as $handler) {
             $handler->handle($feedback);
-        }
-
-        if ($redirect = $request->query->get('redirect')) {
-            $website = Reason::Illumineering === $feedback->reason ? 'https://www.illumineering.fr/' : 'https://padlok.app/';
-
-            if (str_starts_with($redirect, $website)) {
-                return new RedirectResponse($redirect);
-            }
         }
 
         return new Response(null, 200);

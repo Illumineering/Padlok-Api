@@ -63,7 +63,6 @@ use function Safe\date;
             ],
         ),
     ],
-    inputFormats: ['json', 'form'],
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
 )]
@@ -79,9 +78,6 @@ final class Feedback
     #[Assert\Email]
     #[Groups(['read', 'write'])]
     public ?string $email = null;
-
-    #[Groups(['read', 'write'])]
-    public ?string $occupation = null;
 
     #[Assert\NotBlank]
     #[Groups(['read', 'write'])]
@@ -103,7 +99,6 @@ final class Feedback
             'Download date' => $this->context->downloadDate,
             'Language' => $this->context->language,
             'Mail' => $this->email,
-            'Occupation' => $this->occupation,
             'OS Name' => $this->context->osName,
             'OS Version' => $this->context->osVersion,
             'Reason' => $this->reason->value,
