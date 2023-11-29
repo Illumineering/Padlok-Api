@@ -10,7 +10,7 @@ jobs:
   tests:
     strategy:
       matrix:
-        version: [8.1, 8.2]
+        version: [8.2]
     name: Tests
     runs-on: ubuntu-22.04
     steps:
