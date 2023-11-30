@@ -12,9 +12,9 @@ api_platform:
     html:
       - 'text/html'
   name_converter: 'Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter'
-  enable_docs: '%env(bool:APP_DEBUG)%'
-  enable_swagger: '%env(bool:SWAGGER_ENABLED)%'
-  enable_swagger_ui: '%env(bool:SWAGGER_ENABLED)%'
+  enable_docs: false
+  enable_swagger: false
+  enable_swagger_ui: false
   defaults:
     input_formats: ['json']
     output_formats: ['json']

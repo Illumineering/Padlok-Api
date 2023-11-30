@@ -165,18 +165,6 @@
             "src/Kernel.php"
         ]
     },
-    "symfony/mailer": {
-        "version": "6.2",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "4.3",
-            "ref": "2bf89438209656b85b9a49238c4467bff1b1f939"
-        },
-        "files": [
-            "config/packages/mailer.yaml"
-        ]
-    },
     "symfony/maker-bundle": {
         "version": "1.48",
         "recipe": {
@@ -212,19 +200,6 @@
         "files": [
             "config/packages/routing.yaml",
             "config/routes.yaml"
-        ]
-    },
-    "symfony/translation": {
-        "version": "6.2",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "5.3",
-            "ref": "da64f5a2b6d96f5dc24914517c0350a5f91dee43"
-        },
-        "files": [
-            "config/packages/translation.yaml",
-            "translations/.gitignore"
         ]
     },
     "symfony/twig-bundle": {
@@ -263,9 +238,6 @@
         "files": [
             "config/packages/validator.yaml"
         ]
-    },
-    "twig/extra-bundle": {
-        "version": "v3.5.1"
     },
     "zenstruck/foundry": {
         "version": "1.29",
