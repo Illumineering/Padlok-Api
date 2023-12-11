@@ -7,14 +7,21 @@ api_platform:
       - '%kernel.project_dir%/src/Entity'
       - '%kernel.project_dir%/src/ApiPlatform/Dto'
   formats:
-    json:
-      - 'application/json'
-    html:
-      - 'text/html'
+    json: ['application/json']
+  docs_formats:
+    json: ['application/json']
+    html: ['text/html']
+  defaults:
+    stateless: true
+    cache_headers:
+      vary: ['Content-Type', 'Authorization', 'Origin']
+    extra_properties:
+      standard_put: true
+      rfc_7807_compliant_errors: true
+    event_listeners_backward_compatibility_layer: false
+    keep_legacy_inflector: false
+
   name_converter: 'Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter'
   enable_docs: false
   enable_swagger: false
   enable_swagger_ui: false
-  defaults:
-    input_formats: ['json']
-    output_formats: ['json']
