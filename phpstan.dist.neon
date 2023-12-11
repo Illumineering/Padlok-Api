@@ -5,13 +5,10 @@ includes:
 	- vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon
 
 parameters:
-	level: 8
-	paths:
-		- src
-		- tests
-	ignoreErrors: []
-	scanDirectories:
-		- %rootDir%/../../../migrations
-	symfony:
-		container_xml_path: %rootDir%/../../../var/cache/dev/App_KernelDevDebugContainer.xml
-	checkMissingCallableSignature: true
+    level: 8
+    paths:
+        - bin/
+        - config/
+        - public/
+        - src/
+        - tests/
