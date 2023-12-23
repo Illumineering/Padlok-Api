@@ -31,9 +31,6 @@ jobs:
       - name: Tests
         run: composer test
 
-      - name: Run PhpUnit
-        run: ./vendor/bin/phpunit
-
   deploy_dev:
     name: Deploy in dev
     needs: tests
