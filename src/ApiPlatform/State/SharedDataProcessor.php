@@ -16,7 +16,7 @@ use Symfony\Component\Uid\Uuid;
 use Tuupola\Base62;
 
 /**
- * @implements ProcessorInterface<Output>
+ * @implements ProcessorInterface<Info|SharedData, Output>
  */
 final class SharedDataProcessor implements ProcessorInterface
 {
