@@ -28,8 +28,14 @@ jobs:
       - name: Build the stack
         run: docker-compose up -d
 
-      - name: Tests
-        run: composer test
+      - name: Code Style
+        run: composer check-style
+
+      - name: Static analysis
+        run: composer stan
+
+      - name: Test suite
+        run: composer unit
 
   deploy_dev:
     name: Deploy in dev
