@@ -18,7 +18,7 @@ use App\ApiPlatform\State\SharedInfoProvider;
 use App\Repository\SharedDataRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation\Timestampable;
+use Symfony\Component\Clock\Clock;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -109,14 +109,17 @@ class SharedData
     private string $adminToken;
 
     #[ORM\Column]
-    #[Timestampable(on: 'create')]
     #[Groups(['read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    #[Timestampable(on: 'update')]
     #[Groups(['read'])]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    public function __construct()
+    {
+        $this->createdAt = Clock::get()->now();
+    }
 
     public function getId(): ?int
     {
@@ -173,6 +176,13 @@ class SharedData
     public function getUpdatedAt(): ?\DateTimeImmutable
     {
         return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
     }
 
     public function getOutput(): Output
