@@ -95,13 +95,16 @@
             "php-cs-fixer fix"
         ],
         "stan": [
-            "phpstan analyse --memory-limit 1G"
+            "bin/console -e dev cache:clear",
+            "phpstan analyse --memory-limit 1G",
+            "bin/console -e test cache:clear",
+            "phpstan analyse -c phpstan.test.neon --memory-limit 1G"
         ],
         "unit": [
+            "bin/console -e test cache:clear",
             "bin/console -e test doctrine:database:drop --no-interaction --if-exists --force",
             "bin/console -e test doctrine:database:create --no-interaction --if-not-exists",
-            "bin/console -e test doctrine:migration:migrate --no-interaction --all-or-nothing --allow-no-migration",
-            "bin/console -e test cache:clear",
+            "bin/console -e test doctrine:migration:migrate --no-interaction --allow-no-migration",
             "bin/phpunit"
         ],
         "lint": [
