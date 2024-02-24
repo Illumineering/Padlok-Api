@@ -15,7 +15,7 @@ final class FaqNormalizer implements NormalizerInterface
     ) {
     }
 
-    public function normalize(mixed $object, string $format = null, array $context = [])
+    public function normalize(mixed $object, ?string $format = null, array $context = [])
     {
         assert($object instanceof Faq);
 
@@ -32,7 +32,7 @@ final class FaqNormalizer implements NormalizerInterface
         return [Faq::class => true];
     }
 
-    public function supportsNormalization(mixed $data, string $format = null): bool
+    public function supportsNormalization(mixed $data, ?string $format = null): bool
     {
         return $data instanceof Faq;
     }

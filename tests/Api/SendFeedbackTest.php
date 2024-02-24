@@ -108,7 +108,7 @@ final class SendFeedbackTest extends ApiTestCase
      * @param array<string, string> $feedback
      * @param array<string, string> $headers
      */
-    private function sendFeedback(array $feedback, array $headers = [], string $redirect = null, bool $json = true): ResponseInterface
+    private function sendFeedback(array $feedback, array $headers = [], ?string $redirect = null, bool $json = true): ResponseInterface
     {
         $options = new HttpOptions();
         $options->setHeaders([
