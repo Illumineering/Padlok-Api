@@ -4,7 +4,7 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.2",
+        "php": ">=8.3",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "api-platform/core": "^3.2",
@@ -54,7 +54,7 @@
             "phpstan/extension-installer": true
         },
         "platform": {
-            "php": "8.2.13"
+            "php": "8.3.3"
         },
         "sort-packages": true
     },

@@ -13,7 +13,7 @@ jobs:
   tests:
     strategy:
       matrix:
-        version: [8.2,8.3]
+        version: [8.3]
     name: Tests
     runs-on: ubuntu-22.04
     steps:
@@ -52,7 +52,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: 8.3
           tools: composer
 
       - name: Install dependencies
@@ -92,7 +92,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: 8.3
           tools: composer
 
       - name: Install dependencies
@@ -119,4 +119,3 @@ jobs:
           script: |
             cd ${{ secrets.DEPLOY_PATH_PROD }}
             ./scripts/post-deploy
-

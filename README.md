@@ -11,7 +11,7 @@ Even when sharing an address and codes, the api is designed to retrieve encrypte
 
 Padlok-API is built using [Symfony](https://symfony.com)
 Requires:
-- PHP >= 8.2
+- PHP >= 8.3
 - Composer
 - ext-ctype, ext-iconv
 
