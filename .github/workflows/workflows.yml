@@ -4,7 +4,10 @@ on:
   push:
     branches: [ main, dev ]
   pull_request:
-    branches: [ '*' ]
+    branches:
+      - '*'
+      - '!main'
+      - '!dev'
 
 jobs:
   tests:
@@ -28,11 +31,15 @@ jobs:
       - name: Build the stack
         run: docker-compose up -d
 
-      - name: Tests
-        run: composer test
+      - name: Code Style
+        run: composer check-style
 
-      - name: Run PhpUnit
-        run: ./vendor/bin/phpunit
+      - name: Static analysis
+        run: composer stan
+
+      - name: Test suite
+        run: composer unit
+
   deploy_dev:
     name: Deploy in dev
     needs: tests

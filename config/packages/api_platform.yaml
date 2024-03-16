@@ -1,20 +1,27 @@
 api_platform:
   title: Padlok API
   version: '%env(string:API_VERSION)%'
-  show_webby: false
   mapping:
     paths:
       - '%kernel.project_dir%/src/Entity'
       - '%kernel.project_dir%/src/ApiPlatform/Dto'
   formats:
-    json:
-      - 'application/json'
-    html:
-      - 'text/html'
-  name_converter: 'Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter'
+    json: ['application/json']
+  docs_formats:
+    json: ['application/json']
+    html: ['text/html']
+  defaults:
+    stateless: true
+    cache_headers:
+      vary: ['Content-Type', 'Authorization', 'Origin']
+    extra_properties:
+      standard_put: true
+      rfc_7807_compliant_errors: true
+    event_listeners_backward_compatibility_layer: false
+    keep_legacy_inflector: false
+
   enable_docs: '%env(bool:APP_DEBUG)%'
   enable_swagger: '%env(bool:SWAGGER_ENABLED)%'
   enable_swagger_ui: '%env(bool:SWAGGER_ENABLED)%'
-  defaults:
-    input_formats: ['json']
-    output_formats: ['json']
+  name_converter: 'Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter'
+  show_webby: false

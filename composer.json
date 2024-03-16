@@ -8,47 +8,41 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "api-platform/core": "^3.2",
-        "doctrine/annotations": "^2.0",
         "doctrine/doctrine-bundle": "^2.8",
         "doctrine/doctrine-migrations-bundle": "^3.2",
-        "doctrine/orm": "^2.14",
+        "doctrine/orm": "^3.0",
         "nelmio/cors-bundle": "^2.3",
         "phpdocumentor/reflection-docblock": "^5.3",
-        "phpstan/phpdoc-parser": "^1.16",
-        "stof/doctrine-extensions-bundle": "^1.7",
-        "symfony/asset": "6.4.*",
-        "symfony/console": "6.4.*",
-        "symfony/dotenv": "6.4.*",
-        "symfony/expression-language": "6.4.*",
+        "symfony/clock": "7.0.*",
+        "symfony/console": "7.0.*",
+        "symfony/dotenv": "7.0.*",
+        "symfony/expression-language": "7.0.*",
         "symfony/flex": "^2",
-        "symfony/framework-bundle": "6.4.*",
-        "symfony/mailer": "6.4.*",
-        "symfony/property-access": "6.4.*",
-        "symfony/property-info": "6.4.*",
-        "symfony/runtime": "6.4.*",
-        "symfony/serializer": "6.4.*",
-        "symfony/translation": "6.4.*",
-        "symfony/twig-bundle": "6.4.*",
-        "symfony/uid": "6.4.*",
-        "symfony/validator": "6.4.*",
-        "symfony/yaml": "6.4.*",
+        "symfony/framework-bundle": "7.0.*",
+        "symfony/property-access": "7.0.*",
+        "symfony/property-info": "7.0.*",
+        "symfony/runtime": "7.0.*",
+        "symfony/serializer": "7.0.*",
+        "symfony/twig-bundle": "7.0.*",
+        "symfony/uid": "7.0.*",
+        "symfony/validator": "7.0.*",
+        "symfony/yaml": "7.0.*",
         "thecodingmachine/safe": "^2.4",
-        "tuupola/base62": "^2.1",
-        "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+        "tuupola/base62": "^2.1"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.14",
         "justinrainbow/json-schema": "^5.2",
+        "phpstan/extension-installer": "^1.3",
         "phpstan/phpstan": "^1.10",
         "phpstan/phpstan-doctrine": "^1.3",
         "phpstan/phpstan-phpunit": "^1.3",
         "phpstan/phpstan-symfony": "^1.2",
-        "phpunit/phpunit": "^10.0",
-        "symfony/browser-kit": "6.4.*",
-        "symfony/http-client": "6.4.*",
+        "phpunit/phpunit": "^10.5",
+        "symfony/browser-kit": "7.0.*",
+        "symfony/http-client": "7.0.*",
         "symfony/maker-bundle": "^1.48",
-        "symfony/phpunit-bridge": "6.4.*",
+        "symfony/phpunit-bridge": "7.0.*",
         "thecodingmachine/phpstan-safe-rule": "^1.2",
         "zenstruck/foundry": "^1.29"
     },
@@ -56,7 +50,8 @@
         "allow-plugins": {
             "php-http/discovery": true,
             "symfony/flex": true,
-            "symfony/runtime": true
+            "symfony/runtime": true,
+            "phpstan/extension-installer": true
         },
         "platform": {
             "php": "8.2.13"
@@ -93,22 +88,23 @@
         "post-update-cmd": [
             "@auto-scripts"
         ],
-        "boot": [
-            "docker-compose up -d",
-            "symfony server:start -d",
-            "sleep 3",
-            "bin/console doctrine:database:create --no-interaction --if-not-exists",
-            "bin/console doctrine:migration:migrate --no-interaction --all-or-nothing --allow-no-migration"
+        "check-style": [
+            "php-cs-fixer fix --dry-run"
         ],
         "sniff": [
-            "php-cs-fixer fix --allow-risky=yes"
+            "php-cs-fixer fix"
         ],
         "stan": [
-            "phpstan analyse --memory-limit 1G"
+            "bin/console -e dev cache:clear",
+            "phpstan analyse --memory-limit 1G",
+            "bin/console -e test cache:clear",
+            "phpstan analyse -c phpstan.test.neon --memory-limit 1G"
         ],
         "unit": [
+            "bin/console -e test cache:clear",
+            "bin/console -e test doctrine:database:drop --no-interaction --if-exists --force",
             "bin/console -e test doctrine:database:create --no-interaction --if-not-exists",
-            "bin/console -e test doctrine:migration:migrate --no-interaction --all-or-nothing --allow-no-migration",
+            "bin/console -e test doctrine:migration:migrate --no-interaction --allow-no-migration",
             "bin/phpunit"
         ],
         "lint": [
@@ -126,7 +122,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "6.4.*"
+            "require": "7.0.*"
         }
     }
 }
