@@ -17,8 +17,8 @@ api_platform:
     extra_properties:
       standard_put: true
       rfc_7807_compliant_errors: true
-    event_listeners_backward_compatibility_layer: false
-    keep_legacy_inflector: false
+  event_listeners_backward_compatibility_layer: false
+  keep_legacy_inflector: false
 
   enable_docs: '%env(bool:APP_DEBUG)%'
   enable_swagger: '%env(bool:SWAGGER_ENABLED)%'
