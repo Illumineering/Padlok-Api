@@ -34,18 +34,18 @@ final class SharedDataProcessor implements ProcessorInterface
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): ?Output
     {
         if ($operation instanceof DeleteOperationInterface) {
-            assert($data instanceof SharedData);
+            \assert($data instanceof SharedData);
             $this->repository->remove($data, true);
 
             return null;
         }
 
-        assert($data instanceof Info);
+        \assert($data instanceof Info);
 
         if ($previous = $context['previous_data'] ?? null) {
-            assert($previous instanceof SharedData);
+            \assert($previous instanceof SharedData);
             $shared = $this->repository->find($previous->getId());
-            assert(!is_null($shared));
+            \assert(null !== $shared);
         } else {
             $shared = new SharedData();
             $shared->setIdentifier($this->base62->encode(Uuid::v4()->toBinary()));
@@ -53,7 +53,7 @@ final class SharedDataProcessor implements ProcessorInterface
         }
 
         $normalized = $this->normalizer->normalize($data);
-        assert(is_array($normalized));
+        \assert(\is_array($normalized));
         $shared->setInfo($normalized);
 
         $this->repository->save($shared, true);
