@@ -19,7 +19,6 @@ use App\Repository\SharedDataRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Clock\Clock;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: SharedDataRepository::class)]
@@ -27,17 +26,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new Get(
             uriTemplate: '/shared/{identifier}',
-            openapiContext: [
-                'tags' => ['Sharing'],
-            ],
             output: Info::class,
             provider: SharedInfoProvider::class,
         ),
         new Post(
             uriTemplate: '/share',
-            openapiContext: [
-                'tags' => ['Sharing'],
-            ],
             input: Info::class,
             output: Output::class,
             processor: SharedDataProcessor::class,
@@ -47,16 +40,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
             uriVariables: [
                 'identifier',
                 'admin_token',
-            ],
-            openapiContext: [
-                'tags' => ['Sharing'],
-                'responses' => [
-                    Response::HTTP_OK => ['description' => 'Shared info updated'],
-                    Response::HTTP_BAD_REQUEST => ['description' => 'Invalid input'],
-                    Response::HTTP_UNAUTHORIZED => ['description' => 'Unauthorized'],
-                    Response::HTTP_NOT_FOUND => ['description' => 'Resource not found'],
-                    Response::HTTP_UNPROCESSABLE_ENTITY => ['description' => 'Unprocessable entity'],
-                ],
             ],
             input: Info::class,
             provider: SharedDataProvider::class,
@@ -70,14 +53,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
             uriVariables: [
                 'identifier',
                 'admin_token',
-            ],
-            openapiContext: [
-                'tags' => ['Sharing'],
-                'responses' => [
-                    Response::HTTP_OK => ['description' => 'Shared info deleted'],
-                    Response::HTTP_UNAUTHORIZED => ['description' => 'Unauthorized'],
-                    Response::HTTP_NOT_FOUND => ['description' => 'Resource not found'],
-                ],
             ],
             provider: SharedDataProvider::class,
             processor: SharedDataProcessor::class,
