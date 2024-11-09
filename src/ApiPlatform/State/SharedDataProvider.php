@@ -22,10 +22,6 @@ final class SharedDataProvider implements ProviderInterface
     ) {
     }
 
-    /**
-     * @param array<string, mixed> $uriVariables
-     * @param array<string, mixed> $context
-     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
         $object = $this->repository->findOneBy(['identifier' => $uriVariables['identifier']]);

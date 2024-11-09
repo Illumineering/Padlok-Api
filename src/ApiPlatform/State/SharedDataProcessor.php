@@ -27,10 +27,6 @@ final class SharedDataProcessor implements ProcessorInterface
     ) {
     }
 
-    /**
-     * @param array<string, mixed> $uriVariables
-     * @param array<string, mixed> $context
-     */
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): ?Output
     {
         if ($operation instanceof DeleteOperationInterface) {

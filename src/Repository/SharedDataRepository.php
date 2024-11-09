@@ -11,11 +11,6 @@ use Symfony\Component\Clock\ClockInterface;
 
 /**
  * @extends ServiceEntityRepository<SharedData>
- *
- * @method SharedData|null find($id, $lockMode = null, $lockVersion = null)
- * @method SharedData|null findOneBy(array $criteria, array $orderBy = null)
- * @method SharedData[]    findAll()
- * @method SharedData[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class SharedDataRepository extends ServiceEntityRepository
 {

@@ -20,10 +20,6 @@ final class SharedInfoProvider implements ProviderInterface
     ) {
     }
 
-    /**
-     * @param array<string, mixed> $uriVariables
-     * @param array<string, mixed> $context
-     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): ?Info
     {
         $object = $this->provider->provide($operation, $uriVariables, $context);
