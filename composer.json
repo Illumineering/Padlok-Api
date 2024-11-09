@@ -96,8 +96,14 @@
             "php-cs-fixer fix"
         ],
         "stan": [
+            "@stan-src",
+            "@stan-tests"
+        ],
+        "stan-src": [
             "bin/console -e dev cache:clear",
-            "phpstan analyse --memory-limit 1G",
+            "phpstan analyse --memory-limit 1G"
+        ],
+        "stan-tests": [
             "bin/console -e test cache:clear",
             "phpstan analyse -c phpstan.test.neon --memory-limit 1G"
         ],
