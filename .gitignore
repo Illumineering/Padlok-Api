@@ -1,7 +1,4 @@
 
-# PhpStorm
-.idea
-
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php
@@ -12,11 +9,6 @@
 /vendor/
 ###< symfony/framework-bundle ###
 
-###> phpunit/phpunit ###
-/phpunit.xml
-.phpunit.cache
-###< phpunit/phpunit ###
-
 ###> friendsofphp/php-cs-fixer ###
 /.php-cs-fixer.php
 /.php-cs-fixer.cache
@@ -25,3 +17,8 @@
 ###> phpstan/phpstan ###
 phpstan.neon
 ###< phpstan/phpstan ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.cache
+###< phpunit/phpunit ###
