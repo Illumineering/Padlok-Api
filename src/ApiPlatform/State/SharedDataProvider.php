@@ -22,7 +22,7 @@ final class SharedDataProvider implements ProviderInterface
     ) {
     }
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): ?SharedData
     {
         $object = $this->repository->findOneBy(['identifier' => $uriVariables['identifier']]);
         if (null === $object) {

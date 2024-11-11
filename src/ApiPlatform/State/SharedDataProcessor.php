@@ -27,6 +27,7 @@ final class SharedDataProcessor implements ProcessorInterface
     ) {
     }
 
+    /* @phpstan-ignore class.notFound (Annotation error because of ApiPlatform…) */
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): ?Output
     {
         if ($operation instanceof DeleteOperationInterface) {

@@ -23,7 +23,7 @@ final class SharedInfoProvider implements ProviderInterface
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): ?Info
     {
         $object = $this->provider->provide($operation, $uriVariables, $context);
-        if (null === $object || is_iterable($object)) {
+        if (null === $object) {
             return null;
         }
 

@@ -85,9 +85,9 @@ class SharedData
 
     #[ORM\Column]
     #[Groups(['read'])]
-    private ?\DateTimeImmutable $createdAt = null;
+    private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     #[Groups(['read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
