@@ -78,6 +78,7 @@ final class ShareTest extends ApiTestCase
 
         $base62 = new Base62();
         try {
+            $this->assertNotNull(self::$identifier);
             Uuid::fromBinary($base62->decode(self::$identifier));
         } catch (\InvalidArgumentException $e) {
             $this->fail($e->getMessage());
