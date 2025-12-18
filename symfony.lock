@@ -23,12 +23,12 @@
         }
     },
     "doctrine/doctrine-bundle": {
-        "version": "2.14",
+        "version": "3.1",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
-            "version": "2.13",
-            "ref": "620b57f496f2e599a6015a9fa222c2ee0a32adcb"
+            "version": "3.0",
+            "ref": "18ee08e513ba0303fd09a01fc1c934870af06ffa"
         },
         "files": [
             "config/packages/doctrine.yaml",
@@ -98,18 +98,18 @@
         ]
     },
     "phpunit/phpunit": {
-        "version": "12.1",
+        "version": "12.5",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "11.1",
-            "ref": "c6658a60fc9d594805370eacdf542c3d6b5c0869"
+            "ref": "1117deb12541f35793eec9fff7494d7aa12283fc"
         },
         "files": [
             ".env.test",
-            "bin/phpunit",
             "phpunit.dist.xml",
-            "tests/bootstrap.php"
+            "tests/bootstrap.php",
+            "bin/phpunit"
         ]
     },
     "symfony/console": {
@@ -138,12 +138,12 @@
         ]
     },
     "symfony/framework-bundle": {
-        "version": "7.3",
+        "version": "7.4",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
-            "version": "7.3",
-            "ref": "a64726446f6dcf3721f192c1df35418d69b3ba92"
+            "version": "7.4",
+            "ref": "09f6e081c763a206802674ce0cb34a022f0ffc6d"
         },
         "files": [
             ".editorconfig",
@@ -194,12 +194,12 @@
         ]
     },
     "symfony/routing": {
-        "version": "7.0",
+        "version": "7.4",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
-            "version": "7.0",
-            "ref": "21b72649d5622d8f7da329ffb5afb232a023619d"
+            "version": "7.4",
+            "ref": "bc94c4fd86f393f3ab3947c18b830ea343e51ded"
         },
         "files": [
             "config/packages/routing.yaml",

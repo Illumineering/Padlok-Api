@@ -14,6 +14,8 @@ use Tuupola\Base62;
 
 final class ShareTest extends ApiTestCase
 {
+    protected static ?bool $alwaysBootKernel = false;
+
     /**
      * @var array<string, mixed>
      */
