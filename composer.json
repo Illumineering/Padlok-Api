@@ -12,7 +12,6 @@
         "doctrine/doctrine-migrations-bundle": "^4.0",
         "doctrine/orm": "^3.0",
         "nelmio/cors-bundle": "^2.3",
-        "phpdocumentor/reflection-docblock": "^5.3",
         "symfony/clock": "*",
         "symfony/console": "*",
         "symfony/dotenv": "*",
@@ -129,7 +128,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "7.4.*"
+            "require": "8.0.*"
         }
     }
 }
