@@ -8,6 +8,7 @@ $finder = (new Finder())
     ->in(__DIR__)
     ->exclude('var')
     ->notPath('config/reference.php')
+    ->notPath('public/index.php')
 ;
 
 return (new Config())
