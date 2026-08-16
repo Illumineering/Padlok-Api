@@ -6,11 +6,11 @@ namespace App\ApiPlatform\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
-use App\ApiPlatform\Dto\Sharing\Info;
+use App\ApiPlatform\Dto\Sharing\Details;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 /**
- * @implements ProviderInterface<Info>
+ * @implements ProviderInterface<Details>
  */
 final class SharedInfoProvider implements ProviderInterface
 {
@@ -20,13 +20,17 @@ final class SharedInfoProvider implements ProviderInterface
     ) {
     }
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): ?Info
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): ?Details
     {
         $object = $this->provider->provide($operation, $uriVariables, $context);
         if (null === $object) {
             return null;
         }
 
-        return $this->denormalizer->denormalize($object->getInfo(), Info::class);
+        $details = $this->denormalizer->denormalize($object->getInfo(), Details::class);
+        $details->createdAt = $object->getCreatedAt();
+        $details->expiration = $object->getExpiration();
+
+        return $details;
     }
 }

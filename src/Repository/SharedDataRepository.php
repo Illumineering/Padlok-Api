@@ -39,4 +39,23 @@ class SharedDataRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    /**
+     * Deletes every entry whose expiration is due, and returns how many were removed.
+     * Entries without an expiration are never removed.
+     */
+    public function deleteExpired(\DateTimeImmutable $now): int
+    {
+        $deleted = $this->getEntityManager()->createQueryBuilder()
+            ->delete(SharedData::class, 'shared')
+            ->where('shared.expiration IS NOT NULL')
+            ->andWhere('shared.expiration <= :now')
+            ->setParameter('now', $now)
+            ->getQuery()
+            ->execute();
+
+        \assert(\is_int($deleted));
+
+        return $deleted;
+    }
 }

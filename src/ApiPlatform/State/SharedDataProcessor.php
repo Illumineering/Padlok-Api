@@ -11,6 +11,8 @@ use App\ApiPlatform\Dto\Sharing\Info;
 use App\ApiPlatform\Dto\Sharing\Output;
 use App\Entity\SharedData;
 use App\Repository\SharedDataRepository;
+use Symfony\Component\Clock\ClockInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Uid\Uuid;
 use Tuupola\Base62;
@@ -20,11 +22,17 @@ use Tuupola\Base62;
  */
 final class SharedDataProcessor implements ProcessorInterface
 {
+    private readonly \DateInterval $lifetime;
+
     public function __construct(
         private readonly SharedDataRepository $repository,
         private readonly NormalizerInterface $normalizer,
         private readonly Base62 $base62,
+        private readonly ClockInterface $clock,
+        #[Autowire('%env(int:SHARED_DATA_LIFETIME_DAYS)%')]
+        int $lifetimeInDays,
     ) {
+        $this->lifetime = new \DateInterval(\sprintf('P%dD', $lifetimeInDays));
     }
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): ?Output
@@ -51,6 +59,7 @@ final class SharedDataProcessor implements ProcessorInterface
         $normalized = $this->normalizer->normalize($data);
         \assert(\is_array($normalized));
         $shared->setInfo($normalized);
+        $shared->setExpiration($this->clock->now()->add($this->lifetime));
 
         $this->repository->save($shared, true);
 

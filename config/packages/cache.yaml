@@ -15,5 +15,8 @@ framework:
         #app: cache.adapter.apcu
 
         # Namespaced pools use the above "app" backend by default
-        #pools:
-            #my.dedicated.cache: null
+        pools:
+            # To store long-term stuff, like the scheduler checkpoint. Backing it by the
+            # database keeps it independent of how var/ is laid out across releases.
+            app.persistent.cache:
+                adapter: cache.adapter.doctrine_dbal

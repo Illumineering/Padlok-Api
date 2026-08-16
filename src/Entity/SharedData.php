@@ -10,6 +10,7 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\ApiPlatform\Dto\Sharing\Details;
 use App\ApiPlatform\Dto\Sharing\Info;
 use App\ApiPlatform\Dto\Sharing\Output;
 use App\ApiPlatform\State\SharedDataProcessor;
@@ -26,7 +27,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
     operations: [
         new Get(
             uriTemplate: '/shared/{identifier}',
-            output: Info::class,
+            output: Details::class,
             provider: SharedInfoProvider::class,
         ),
         new Post(
@@ -91,6 +92,14 @@ class SharedData
     #[Groups(['read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    /**
+     * A null expiration means the entry never expires. Entries created before
+     * expirations were introduced are kept that way on purpose.
+     */
+    #[ORM\Column(nullable: true)]
+    #[Groups(['read'])]
+    private ?\DateTimeImmutable $expiration = null;
+
     public function __construct()
     {
         $this->createdAt = Clock::get()->now();
@@ -143,7 +152,7 @@ class SharedData
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
@@ -160,11 +169,24 @@ class SharedData
         return $this;
     }
 
+    public function getExpiration(): ?\DateTimeImmutable
+    {
+        return $this->expiration;
+    }
+
+    public function setExpiration(?\DateTimeImmutable $expiration): self
+    {
+        $this->expiration = $expiration;
+
+        return $this;
+    }
+
     public function getOutput(): Output
     {
         $output = new Output();
         $output->identifier = $this->identifier;
         $output->adminToken = $this->adminToken;
+        $output->expiration = $this->expiration;
 
         return $output;
     }

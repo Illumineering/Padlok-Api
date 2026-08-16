@@ -8,4 +8,5 @@ final class Output
 {
     public string $identifier;
     public string $adminToken;
+    public ?\DateTimeImmutable $expiration = null;
 }

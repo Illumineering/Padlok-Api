@@ -33,6 +33,8 @@ final class ShareTest extends ApiTestCase
 
     private static ?string $identifier = null;
     private static ?string $adminToken = null;
+    private static ?string $createdAt = null;
+    private static ?string $expiration = null;
 
     protected function setUp(): void
     {
@@ -42,8 +44,9 @@ final class ShareTest extends ApiTestCase
                 'properties' => [
                     'identifier' => ['type' => 'string'],
                     'admin_token' => ['type' => 'string'],
+                    'expiration' => ['type' => 'string'],
                 ],
-                'required' => ['identifier', 'admin_token'],
+                'required' => ['identifier', 'admin_token', 'expiration'],
                 'additionalProperties' => false,
             ];
         }
@@ -97,7 +100,15 @@ final class ShareTest extends ApiTestCase
         $client = self::createClient();
         $response = $client->request('GET', 'shared/'.self::$identifier, $options->toArray());
         $this->assertResponseIsSuccessful();
-        $this->assertEquals($this->initialData, $response->toArray());
+
+        $data = $response->toArray();
+        $this->assertSharedPayload($this->initialData, $data);
+        $this->assertExpiresInLifetime($data);
+
+        $this->assertArrayHasKey('created_at', $data);
+        $this->assertIsString($data['created_at']);
+        self::$createdAt = $data['created_at'];
+        self::$expiration = $data['expiration'];
     }
 
     #[Test]
@@ -136,7 +147,17 @@ final class ShareTest extends ApiTestCase
         $client = self::createClient();
         $response = $client->request('GET', 'shared/'.self::$identifier, $options->toArray());
         $this->assertResponseIsSuccessful();
-        $this->assertEquals($this->updatedData, $response->toArray());
+
+        $data = $response->toArray();
+        $this->assertSharedPayload($this->updatedData, $data);
+        $this->assertExpiresInLifetime($data);
+
+        $this->assertSame(self::$createdAt, $data['created_at'], 'An update must not alter the creation date.');
+        $this->assertGreaterThanOrEqual(
+            new \DateTimeImmutable((string) self::$expiration),
+            new \DateTimeImmutable($data['expiration']),
+            'An update must not shorten the expiration.',
+        );
     }
 
     #[Test]
@@ -186,5 +207,32 @@ final class ShareTest extends ApiTestCase
         $client = self::createClient();
         $client->request('PUT', 'shared/'.self::$identifier.'/'.self::$adminToken, $options->toArray());
         $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+    }
+
+    /**
+     * Clients in the wild only decode the sharing payload itself. Whatever metadata gets
+     * added next to it, those keys must keep their exact name, type and value.
+     *
+     * @param array<string, int|string> $expected
+     * @param array<string, mixed>      $payload
+     */
+    private function assertSharedPayload(array $expected, array $payload): void
+    {
+        $this->assertEquals($expected, array_intersect_key($payload, $expected));
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     */
+    private function assertExpiresInLifetime(array $payload): void
+    {
+        $this->assertArrayHasKey('expiration', $payload);
+        $this->assertIsString($payload['expiration']);
+
+        $lifetime = (int) ($_SERVER['SHARED_DATA_LIFETIME_DAYS'] ?? 45);
+        $expected = new \DateTimeImmutable(\sprintf('+%d days', $lifetime));
+        $actual = new \DateTimeImmutable($payload['expiration']);
+
+        $this->assertEqualsWithDelta($expected->getTimestamp(), $actual->getTimestamp(), 60);
     }
 }
