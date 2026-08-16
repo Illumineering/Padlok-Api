@@ -14,6 +14,13 @@ final class Version20230304200332 extends AbstractMigration
         return 'Create shared_data table';
     }
 
+    public function isTransactional(): bool
+    {
+        // DDL implicitly commits on MySQL/MariaDB, so this migration cannot run
+        // in a transaction.
+        return false;
+    }
+
     public function up(Schema $schema): void
     {
         $this->addSql('CREATE TABLE shared_data (id INT AUTO_INCREMENT NOT NULL, identifier CHAR(36) NOT NULL COMMENT \'(DC2Type:guid)\', info LONGTEXT NOT NULL COMMENT \'(DC2Type:json)\', admin_token VARCHAR(255) NOT NULL, created_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', updated_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');

@@ -4,3 +4,10 @@ doctrine_migrations:
         # as migrations classes should NOT be autoloaded
         'DoctrineMigrations': '%kernel.project_dir%/migrations'
     enable_profiler: false
+    # MySQL/MariaDB implicitly commit on DDL, so wrapping a schema migration in
+    # a transaction is a false promise: the commit issued afterwards targets an
+    # already-committed transaction, which is deprecated. This makes newly
+    # generated migrations carry an `isTransactional(): false` override; it does
+    # not affect existing ones, which must override the method themselves.
+    # https://www.doctrine-project.org/projects/doctrine-migrations/en/stable/explanation/implicit-commits.html
+    transactional: false
