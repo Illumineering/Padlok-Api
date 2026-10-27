@@ -13,6 +13,9 @@ api_platform:
     #jsonld: ['application/ld+json']
     jsonopenapi: ['application/vnd.openapi+json']
     html: ['text/html']
+  error_formats:
+    jsonproblem: ['application/problem+json']
+    json: ['application/problem+json', 'application/json']
   defaults:
     stateless: true
     cache_headers:
