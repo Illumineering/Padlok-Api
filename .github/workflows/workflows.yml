@@ -33,7 +33,7 @@ jobs:
         run: composer install --prefer-dist --no-progress
 
       - name: Build the stack
-        run: docker compose up -d
+        run: docker compose up -d --wait
 
       - name: Code Style
         run: composer check-style
