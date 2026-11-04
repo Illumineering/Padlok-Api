@@ -15,6 +15,7 @@ use App\ApiPlatform\Dto\Sharing\Output;
 use App\ApiPlatform\State\SharedDataProcessor;
 use App\ApiPlatform\State\SharedDataProvider;
 use App\ApiPlatform\State\SharedInfoProvider;
+use App\EventListener\ShareCreationRateLimiter;
 use App\Repository\SharedDataRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -29,6 +30,8 @@ use Doctrine\ORM\Mapping as ORM;
         ),
         new Post(
             uriTemplate: '/share',
+            // Matched by App\EventListener\ShareCreationRateLimiter
+            name: ShareCreationRateLimiter::ROUTE,
             input: Info::class,
             output: Output::class,
             processor: SharedDataProcessor::class,

@@ -1,0 +1,31 @@
+framework:
+    rate_limiter:
+        # Limits are per client IP: nginx sets REMOTE_ADDR to the visitor's IP from
+        # Cloudflare's CF-Connecting-IP.
+
+        # Creating a share is the only unauthenticated write.
+        share_creation:
+            policy: sliding_window
+            limit: 20
+            interval: '1 hour'
+
+        # Wrong admin tokens on PUT/DELETE (see SharedDataProvider).
+        admin_token_failures:
+            policy: sliding_window
+            limit: 10
+            interval: '1 hour'
+
+when@test:
+    framework:
+        rate_limiter:
+            # Storage that lives as long as the kernel: each rebooted request starts
+            # with empty limiters, so tests don't share a budget, and a test that needs
+            # one disables kernel reboots. (Array cache pools are reset between requests.)
+            share_creation:
+                storage_service: app.rate_limiter.test_storage
+            admin_token_failures:
+                storage_service: app.rate_limiter.test_storage
+
+    services:
+        app.rate_limiter.test_storage:
+            class: Symfony\Component\RateLimiter\Storage\InMemoryStorage

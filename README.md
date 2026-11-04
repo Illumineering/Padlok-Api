@@ -30,6 +30,8 @@ A share body is `{"iterations": <int>, "salt": "<string>", "sealed": "<string>"}
 
 `PUT` and `DELETE` answer `204` with no body on success, `401` without a Bearer token and `403` with a wrong one.
 
+`POST /share` is limited to 20 requests per client IP per hour (sliding window); beyond that it answers `429` with a `Retry-After` header. After 10 wrong admin tokens within an hour, a client IP gets `429` on every `PUT` and `DELETE`, even with the right token, until the window frees up; successful requests are not counted.
+
 The `admin_token` is only returned by `POST /share`: the API stores just its SHA-256 hash, so it cannot be retrieved later.
 
 The legacy `PUT` and `DELETE /shared/{identifier}/{admin_token}` routes, with the admin token in the path, are still accepted for older app versions but are deprecated.
