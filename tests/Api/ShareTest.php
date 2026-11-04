@@ -141,6 +141,17 @@ final class ShareTest extends ApiTestCase
     }
 
     #[Test]
+    #[Depends('createShareData')]
+    public function identifierIsCaseSensitive(): void
+    {
+        $swapped = strtr((string) self::$identifier, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz');
+        $this->assertNotSame(self::$identifier, $swapped);
+
+        self::createClient()->request('GET', 'shared/'.$swapped, ['headers' => ['Accept' => 'application/json']]);
+        $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+    }
+
+    #[Test]
     #[Depends('getSharedData')]
     public function updateSharedDataWrongToken(): void
     {

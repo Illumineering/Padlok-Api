@@ -91,7 +91,8 @@ class SharedData
     #[ApiProperty(identifier: false)]
     private ?int $id = null;
 
-    #[ORM\Column(length: 36, unique: true, options: ['fixed' => true])]
+    // Base62 is case-sensitive: a case-insensitive collation would match "aBc" for "ABC".
+    #[ORM\Column(length: 36, unique: true, options: ['fixed' => true, 'charset' => 'ascii', 'collation' => 'ascii_bin'])]
     #[ApiProperty(identifier: true)]
     private string $identifier;
 
