@@ -31,9 +31,9 @@ use Doctrine\ORM\Mapping as ORM;
         new Post(
             uriTemplate: '/share',
             // Matched by App\EventListener\ShareCreationRateLimiter
-            name: ShareCreationRateLimiter::ROUTE,
             input: Info::class,
             output: Output::class,
+            name: ShareCreationRateLimiter::ROUTE,
             processor: SharedDataProcessor::class,
         ),
         // Admin token sent as "Authorization: Bearer <admin_token>"
