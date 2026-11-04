@@ -26,7 +26,7 @@ Requires:
 | `DELETE` | `/shared/{identifier}`               | `Authorization: Bearer <admin_token>` | Delete the share                              |
 | `GET`    | `/healthz`                           | none                                  | Health check (`503` when a dependency fails)  |
 
-A share body is `{"iterations": <int>, "salt": "<string>", "sealed": "<string>"}`: all fields are required, `iterations` must be positive, `salt` is at most 255 characters and `sealed` at most 16384 characters. Invalid bodies are rejected with `422`.
+A share body is `{"iterations": <int>, "salt": "<string>", "sealed": "<string>"}`: all fields are required, `iterations` must be between 1 and 1,000,000, `salt` is at most 255 characters and `sealed` at most 16384 characters. Invalid bodies are rejected with `422`.
 
 `PUT` and `DELETE` answer `204` with no body on success, `401` without a Bearer token and `403` with a wrong one.
 

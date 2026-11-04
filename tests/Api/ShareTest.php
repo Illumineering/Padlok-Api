@@ -102,6 +102,7 @@ final class ShareTest extends ApiTestCase
         yield 'missing sealed' => [array_diff_key($valid, ['sealed' => true])];
         yield 'zero iterations' => [['iterations' => 0] + $valid];
         yield 'negative iterations' => [['iterations' => -5] + $valid];
+        yield 'too many iterations' => [['iterations' => Info::MAX_ITERATIONS + 1] + $valid];
         yield 'blank salt' => [['salt' => ''] + $valid];
         yield 'blank sealed' => [['sealed' => ''] + $valid];
         yield 'salt too long' => [['salt' => str_repeat('a', Info::MAX_SALT_LENGTH + 1)] + $valid];
