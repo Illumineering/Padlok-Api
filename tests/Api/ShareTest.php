@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Api;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
+use App\ApiPlatform\Dto\Sharing\Info;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpClient\HttpOptions;
@@ -87,6 +89,40 @@ final class ShareTest extends ApiTestCase
         }
     }
 
+    /**
+     * @return iterable<string, array{array<string, mixed>}>
+     */
+    public static function invalidPayloads(): iterable
+    {
+        $valid = ['iterations' => 1000, 'salt' => 'kLpHPb2zsjo=', 'sealed' => 'rphyE9rfNKrL'];
+
+        yield 'empty payload' => [[]];
+        yield 'missing iterations' => [array_diff_key($valid, ['iterations' => true])];
+        yield 'missing salt' => [array_diff_key($valid, ['salt' => true])];
+        yield 'missing sealed' => [array_diff_key($valid, ['sealed' => true])];
+        yield 'zero iterations' => [['iterations' => 0] + $valid];
+        yield 'negative iterations' => [['iterations' => -5] + $valid];
+        yield 'blank salt' => [['salt' => ''] + $valid];
+        yield 'blank sealed' => [['sealed' => ''] + $valid];
+        yield 'salt too long' => [['salt' => str_repeat('a', Info::MAX_SALT_LENGTH + 1)] + $valid];
+        yield 'sealed too long' => [['sealed' => str_repeat('a', Info::MAX_SEALED_LENGTH + 1)] + $valid];
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     */
+    #[Test]
+    #[DataProvider('invalidPayloads')]
+    public function createShareDataRejectsInvalidPayload(array $payload): void
+    {
+        $options = new HttpOptions();
+        $options->setHeaders(['Accept' => 'application/json']);
+        $options->setJson($payload);
+
+        self::createClient()->request('POST', 'share', $options->toArray());
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
     #[Test]
     #[Depends('createShareData')]
     public function getSharedData(): void
@@ -115,6 +151,22 @@ final class ShareTest extends ApiTestCase
 
     #[Test]
     #[Depends('updateSharedDataWrongToken')]
+    public function updateSharedDataInvalidPayload(): void
+    {
+        $options = new HttpOptions();
+        $options->setHeaders(['Accept' => 'application/json']);
+        $options->setJson(['iterations' => 1510, 'salt' => '', 'sealed' => '']);
+
+        $client = self::createClient();
+        $client->request('PUT', 'shared/'.self::$identifier.'/'.self::$adminToken, $options->toArray());
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+        $response = $client->request('GET', 'shared/'.self::$identifier, ['headers' => ['Accept' => 'application/json']]);
+        $this->assertEquals($this->initialData, $response->toArray());
+    }
+
+    #[Test]
+    #[Depends('updateSharedDataInvalidPayload')]
     public function updateSharedData(): void
     {
         $options = new HttpOptions();
