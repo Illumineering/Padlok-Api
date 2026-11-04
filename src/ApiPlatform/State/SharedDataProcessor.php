@@ -11,6 +11,7 @@ use App\ApiPlatform\Dto\Sharing\Info;
 use App\ApiPlatform\Dto\Sharing\Output;
 use App\Entity\SharedData;
 use App\Repository\SharedDataRepository;
+use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Uid\Uuid;
 use Tuupola\Base62;
@@ -24,6 +25,7 @@ final class SharedDataProcessor implements ProcessorInterface
         private readonly SharedDataRepository $repository,
         private readonly NormalizerInterface $normalizer,
         private readonly Base62 $base62,
+        private readonly ClockInterface $clock,
     ) {
     }
 
@@ -43,7 +45,7 @@ final class SharedDataProcessor implements ProcessorInterface
             $shared = $this->repository->find($previous->getId());
             \assert(null !== $shared);
         } else {
-            $shared = new SharedData();
+            $shared = new SharedData($this->clock->now());
             $shared->setIdentifier($this->base62->encode(Uuid::v4()->toBinary()));
             $shared->setAdminToken($this->base62->encode(Uuid::v4()->toBinary()));
         }

@@ -18,7 +18,6 @@ use App\ApiPlatform\State\SharedInfoProvider;
 use App\Repository\SharedDataRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Clock\Clock;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: SharedDataRepository::class)]
@@ -109,10 +108,10 @@ class SharedData
     #[Groups(['read'])]
     private \DateTimeImmutable $updatedAt;
 
-    public function __construct()
+    public function __construct(\DateTimeImmutable $createdAt)
     {
-        $this->createdAt = Clock::get()->now();
-        $this->updatedAt = $this->createdAt;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $createdAt;
     }
 
     public function getId(): ?int
