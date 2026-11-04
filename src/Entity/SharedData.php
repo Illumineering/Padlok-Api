@@ -37,6 +37,7 @@ use Doctrine\ORM\Mapping as ORM;
         new Put(
             uriTemplate: '/shared/{identifier}',
             input: Info::class,
+            output: false,
             provider: SharedDataProvider::class,
             processor: SharedDataProcessor::class,
             extraProperties: [
@@ -57,6 +58,7 @@ use Doctrine\ORM\Mapping as ORM;
             ],
             deprecationReason: 'Send the admin token as a Bearer token to PUT /shared/{identifier}.',
             input: Info::class,
+            output: false,
             provider: SharedDataProvider::class,
             processor: SharedDataProcessor::class,
             extraProperties: [
@@ -93,8 +95,12 @@ class SharedData
     #[ORM\Column(type: Types::JSON)]
     private array $info;
 
-    #[ORM\Column(length: 255)]
-    private string $adminToken;
+    /**
+     * SHA-256 of the admin token, hex-encoded. Tokens are random 128-bit
+     * values, so a fast hash is enough: there is nothing to brute-force.
+     */
+    #[ORM\Column(length: 64, options: ['fixed' => true])]
+    private string $adminTokenHash;
 
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
@@ -143,16 +149,16 @@ class SharedData
         return $this;
     }
 
-    public function getAdminToken(): string
-    {
-        return $this->adminToken;
-    }
-
     public function setAdminToken(string $adminToken): self
     {
-        $this->adminToken = $adminToken;
+        $this->adminTokenHash = hash('sha256', $adminToken);
 
         return $this;
+    }
+
+    public function isAdminToken(string $adminToken): bool
+    {
+        return hash_equals($this->adminTokenHash, hash('sha256', $adminToken));
     }
 
     public function getCreatedAt(): \DateTimeImmutable
@@ -170,14 +176,5 @@ class SharedData
         $this->updatedAt = $updatedAt;
 
         return $this;
-    }
-
-    public function getOutput(): Output
-    {
-        $output = new Output();
-        $output->identifier = $this->identifier;
-        $output->adminToken = $this->adminToken;
-
-        return $output;
     }
 }

@@ -28,7 +28,9 @@ Requires:
 
 A share body is `{"iterations": <int>, "salt": "<string>", "sealed": "<string>"}`: all fields are required, `iterations` must be positive, `salt` is at most 255 characters and `sealed` at most 16384 characters. Invalid bodies are rejected with `422`.
 
-`PUT` and `DELETE` answer `401` without a Bearer token and `403` with a wrong one.
+`PUT` and `DELETE` answer `204` with no body on success, `401` without a Bearer token and `403` with a wrong one.
+
+The `admin_token` is only returned by `POST /share`: the API stores just its SHA-256 hash, so it cannot be retrieved later.
 
 The legacy `PUT` and `DELETE /shared/{identifier}/{admin_token}` routes, with the admin token in the path, are still accepted for older app versions but are deprecated.
 

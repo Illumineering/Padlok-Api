@@ -17,7 +17,7 @@ use Symfony\Component\Uid\Uuid;
 use Tuupola\Base62;
 
 /**
- * @implements ProcessorInterface<Info|SharedData, Output>
+ * @implements ProcessorInterface<Info|SharedData, Output|null>
  */
 final class SharedDataProcessor implements ProcessorInterface
 {
@@ -47,18 +47,28 @@ final class SharedDataProcessor implements ProcessorInterface
             // already loaded, from the identity map, without another query.
             $shared = $this->repository->find($previous->getId());
             \assert(null !== $shared);
-        } else {
-            $shared = new SharedData($this->clock->now());
-            $shared->setIdentifier($this->base62->encode(Uuid::v4()->toBinary()));
-            $shared->setAdminToken($this->base62->encode(Uuid::v4()->toBinary()));
+            $this->store($shared, $data);
+
+            // PUT has no output: the client already holds the identifier and token.
+            return null;
         }
 
+        $shared = new SharedData($this->clock->now());
+        $shared->setIdentifier($this->base62->encode(Uuid::v4()->toBinary()));
+        $adminToken = $this->base62->encode(Uuid::v4()->toBinary());
+        $shared->setAdminToken($adminToken);
+        $this->store($shared, $data);
+
+        // Only the hash is stored, so this is the one time the token can be returned.
+        return new Output($shared->getIdentifier(), $adminToken);
+    }
+
+    private function store(SharedData $shared, Info $data): void
+    {
         $normalized = $this->normalizer->normalize($data);
         \assert(\is_array($normalized));
         $shared->setInfo($normalized);
 
         $this->repository->save($shared, true);
-
-        return $shared->getOutput();
     }
 }
