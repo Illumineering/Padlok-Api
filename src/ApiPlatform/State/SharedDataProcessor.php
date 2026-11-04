@@ -42,6 +42,9 @@ final class SharedDataProcessor implements ProcessorInterface
 
         if ($previous = $context['previous_data'] ?? null) {
             \assert($previous instanceof SharedData);
+            // previous_data is a clone that Doctrine does not track, so changes to it
+            // would not be persisted. find() returns the managed instance the provider
+            // already loaded, from the identity map, without another query.
             $shared = $this->repository->find($previous->getId());
             \assert(null !== $shared);
         } else {
