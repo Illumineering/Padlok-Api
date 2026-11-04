@@ -22,6 +22,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SharedDataRepository::class)]
 #[ApiResource(
+    // Info is a readonly DTO: a missing or mistyped field fails its constructor, and
+    // this reports it as a 422 violation like the validation constraints do.
+    collectDenormalizationErrors: true,
     operations: [
         new Get(
             uriTemplate: '/shared/{identifier}',

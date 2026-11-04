@@ -103,6 +103,9 @@ final class ShareTest extends ApiTestCase
         yield 'zero iterations' => [['iterations' => 0] + $valid];
         yield 'negative iterations' => [['iterations' => -5] + $valid];
         yield 'too many iterations' => [['iterations' => Info::MAX_ITERATIONS + 1] + $valid];
+        yield 'iterations as string' => [['iterations' => '1000'] + $valid];
+        yield 'null salt' => [['salt' => null] + $valid];
+        yield 'sealed as number' => [['sealed' => 42] + $valid];
         yield 'blank salt' => [['salt' => ''] + $valid];
         yield 'blank sealed' => [['sealed' => ''] + $valid];
         yield 'salt too long' => [['salt' => str_repeat('a', Info::MAX_SALT_LENGTH + 1)] + $valid];
