@@ -30,7 +30,7 @@ jobs:
           tools: composer
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
+        run: composer install --prefer-dist --no-progress
 
       - name: Build the stack
         run: docker compose up -d
@@ -65,7 +65,7 @@ jobs:
           tools: composer
 
       - name: Install dependencies
-        run: APP_ENV=prod APP_DEBUG=0 composer install --no-dev --optimize-autoloader --prefer-dist --no-progress --no-suggest
+        run: APP_ENV=prod APP_DEBUG=0 composer install --no-dev --optimize-autoloader --prefer-dist --no-progress
 
       - name: Rsync deploy
         uses: Burnett01/rsync-deployments@2651e3eecb4ea772cbe952695d04952e92027b4f # 5.2.1
@@ -110,7 +110,7 @@ jobs:
           tools: composer
 
       - name: Install dependencies
-        run: APP_ENV=prod APP_DEBUG=0 composer install --no-dev --optimize-autoloader --prefer-dist --no-progress --no-suggest
+        run: APP_ENV=prod APP_DEBUG=0 composer install --no-dev --optimize-autoloader --prefer-dist --no-progress
 
       - name: Rsync deploy
         uses: Burnett01/rsync-deployments@2651e3eecb4ea772cbe952695d04952e92027b4f # 5.2.1
