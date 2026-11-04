@@ -18,7 +18,6 @@ use App\ApiPlatform\State\SharedInfoProvider;
 use App\Repository\SharedDataRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: SharedDataRepository::class)]
 #[ApiResource(
@@ -86,26 +85,21 @@ class SharedData
 
     #[ORM\Column(length: 36, unique: true, options: ['fixed' => true])]
     #[ApiProperty(identifier: true)]
-    #[Groups(['read'])]
     private string $identifier;
 
     /**
      * @var array<string, int|string>
      */
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['read', 'write'])]
     private array $info;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read'])]
     private string $adminToken;
 
     #[ORM\Column]
-    #[Groups(['read'])]
     private \DateTimeImmutable $createdAt;
 
     #[ORM\Column]
-    #[Groups(['read'])]
     private \DateTimeImmutable $updatedAt;
 
     public function __construct(\DateTimeImmutable $createdAt)
