@@ -1,18 +1,16 @@
 <?php
 
-use PhpCsFixer\Config;
-use PhpCsFixer\Finder;
-use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
-
-$finder = (new Finder())
+$finder = (new PhpCsFixer\Finder())
     ->in(__DIR__)
     ->exclude('var')
-    ->notPath('config/reference.php')
+    ->notPath([
+        'config/bundles.php',
+        'config/reference.php',
+    ])
     ->notPath('public/index.php')
 ;
 
-return (new Config())
-    ->setParallelConfig(ParallelConfigFactory::detect())
+return (new PhpCsFixer\Config())
     ->setRules([
         '@Symfony' => true,
         '@Symfony:risky' => true,
@@ -20,4 +18,4 @@ return (new Config())
     ])
     ->setRiskyAllowed(true)
     ->setFinder($finder)
-    ;
+;
