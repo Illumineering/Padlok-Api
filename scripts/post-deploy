@@ -7,4 +7,4 @@ set -e
 
 # Migrate
 ./bin/console -e prod doctrine:database:create --no-interaction --if-not-exists
-./bin/console -e prod doctrine:migration:migrate --no-interaction --all-or-nothing --allow-no-migration
+./bin/console -e prod doctrine:migration:migrate --no-interaction --allow-no-migration
