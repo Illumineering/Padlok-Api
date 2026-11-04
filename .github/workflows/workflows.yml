@@ -4,10 +4,10 @@ on:
   push:
     branches: [ main, dev ]
   pull_request:
-    branches:
-      - '*'
-      - '!main'
-      - '!dev'
+
+# No job needs to write with the GITHUB_TOKEN: grant nothing by default,
+# and only read access to the repository contents where checkout is needed.
+permissions: {}
 
 jobs:
   tests:
@@ -16,8 +16,12 @@ jobs:
         version: [8.4]
     name: Tests
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -43,11 +47,16 @@ jobs:
   deploy_dev:
     name: Deploy in dev
     needs: tests
-    if: github.ref == 'refs/heads/dev'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    environment: develop
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -83,11 +92,16 @@ jobs:
   deploy_prod:
     name: Deploy in production
     needs: tests
-    if: github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: production
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
