@@ -35,12 +35,29 @@ use Symfony\Component\Serializer\Attribute\Groups;
             output: Output::class,
             processor: SharedDataProcessor::class,
         ),
+        // Admin token sent as "Authorization: Bearer <admin_token>"
+        new Put(
+            uriTemplate: '/shared/{identifier}',
+            input: Info::class,
+            provider: SharedDataProvider::class,
+            processor: SharedDataProcessor::class,
+            extraProperties: [
+                'standard_put' => true,
+            ]
+        ),
+        new Delete(
+            uriTemplate: '/shared/{identifier}',
+            provider: SharedDataProvider::class,
+            processor: SharedDataProcessor::class,
+        ),
+        // Legacy routes with the admin token in the path, kept for older app versions
         new Put(
             uriTemplate: '/shared/{identifier}/{admin_token}',
             uriVariables: [
                 'identifier',
                 'admin_token',
             ],
+            deprecationReason: 'Send the admin token as a Bearer token to PUT /shared/{identifier}.',
             input: Info::class,
             provider: SharedDataProvider::class,
             processor: SharedDataProcessor::class,
@@ -54,6 +71,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
                 'identifier',
                 'admin_token',
             ],
+            deprecationReason: 'Send the admin token as a Bearer token to DELETE /shared/{identifier}.',
             provider: SharedDataProvider::class,
             processor: SharedDataProcessor::class,
         ),
