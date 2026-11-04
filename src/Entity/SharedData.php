@@ -85,7 +85,7 @@ class SharedData
     #[ApiProperty(identifier: false)]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::GUID, unique: true)]
+    #[ORM\Column(length: 36, unique: true, options: ['fixed' => true])]
     #[ApiProperty(identifier: true)]
     #[Groups(['read'])]
     private string $identifier;
@@ -105,13 +105,14 @@ class SharedData
     #[Groups(['read'])]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column]
     #[Groups(['read'])]
-    private ?\DateTimeImmutable $updatedAt = null;
+    private \DateTimeImmutable $updatedAt;
 
     public function __construct()
     {
         $this->createdAt = Clock::get()->now();
+        $this->updatedAt = $this->createdAt;
     }
 
     public function getId(): ?int
@@ -161,12 +162,12 @@ class SharedData
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function getUpdatedAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
     }
