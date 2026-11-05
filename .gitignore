@@ -1,0 +1,24 @@
+# Finder metadata
+.DS_Store
+
+# Editor and Xcode user state
+xcuserdata/
+DerivedData/
+
+# Swift Package Manager build products, and the per-user state Xcode writes when a
+# package is opened on its own.
+.build/
+.swiftpm/
+
+# The root package is a library: its Package.resolved is rewritten whenever it builds
+# on its own, and each app resolves it through its own. The server and the generator
+# tool keep theirs.
+/Package.resolved
+
+# Local configuration and secrets, wherever they sit.
+.env
+.env.*
+!.env.example
+
+# Working plans: local notes, never committed.
+docs/plans/

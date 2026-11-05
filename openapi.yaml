@@ -1,0 +1,377 @@
+openapi: 3.1.0
+info:
+  title: Padlok API
+  version: 7.0.0
+  description: |
+    Stores the addresses Padlok users share, sealed on their device.
+
+    The server only ever sees encrypted blobs: the passphrase that opens them
+    travels in the share link's fragment, which never reaches the server.
+
+    Clients must ignore unknown JSON fields: the server may add some at any time.
+    Error bodies are RFC 9457 problem details; clients act on the status code only.
+servers:
+  - url: https://api.padlok.app
+    description: Production
+  - url: https://dev.padlok.app
+    description: Development
+  - url: http://127.0.0.1:8080
+    description: Local
+
+tags:
+  - name: Shares
+  - name: Health
+
+paths:
+  /share:
+    post:
+      operationId: createShare
+      tags: [Shares]
+      summary: Store a sealed address
+      description: |
+        Returns the share's identifier and its admin token. The token is returned
+        this once: the server only stores its SHA-256 hash.
+
+        Limited to 20 shares per client IP per hour (sliding window).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SharedInfo'
+      responses:
+        '201':
+          description: Stored.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareCreated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /shared/{identifier}:
+    parameters:
+      - $ref: '#/components/parameters/Identifier'
+    get:
+      operationId: getShare
+      tags: [Shares]
+      summary: Retrieve a sealed address
+      responses:
+        '200':
+          description: The sealed address.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SharedInfo'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      operationId: updateShare
+      tags: [Shares]
+      summary: Replace a sealed address
+      description: |
+        The link stays the same. Requires the share's admin token.
+
+        After 10 wrong admin tokens within an hour, a client IP gets 429 on every
+        PUT and DELETE, even with the right token, until the window frees up.
+        Successful requests are not counted.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SharedInfo'
+      responses:
+        '204':
+          description: Replaced.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+    delete:
+      operationId: deleteShare
+      tags: [Shares]
+      summary: Delete a sealed address
+      description: |
+        Requires the share's admin token. Wrong tokens are rate limited as for PUT.
+        Clients should treat 404 as deleted.
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  # Released iOS and Android versions still call these. Keep them until those
+  # versions are gone from the field.
+  /shared/{identifier}/{admin_token}:
+    parameters:
+      - $ref: '#/components/parameters/Identifier'
+      - name: admin_token
+        in: path
+        required: true
+        schema:
+          type: string
+    put:
+      operationId: updateShareLegacy
+      tags: [Shares]
+      summary: Replace a sealed address, token in the path
+      deprecated: true
+      description: Send the admin token as a Bearer token to `PUT /shared/{identifier}`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SharedInfo'
+      responses:
+        '204':
+          description: Replaced.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+    delete:
+      operationId: deleteShareLegacy
+      tags: [Shares]
+      summary: Delete a sealed address, token in the path
+      deprecated: true
+      description: Send the admin token as a Bearer token to `DELETE /shared/{identifier}`.
+      responses:
+        '204':
+          description: Deleted.
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /livez:
+    get:
+      operationId: getLiveness
+      tags: [Health]
+      summary: Liveness check
+      description: |
+        The process is up, whatever the state of its dependencies. Polled after each
+        deploy, which checks that the reported version is the release it just
+        switched to: rolling back cannot fix a database outage.
+      responses:
+        '200':
+          description: The process is up.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Liveness'
+
+  /healthz:
+    get:
+      operationId: getHealth
+      tags: [Health]
+      summary: Health check
+      description: Checks that the database answers. For uptime monitors.
+      responses:
+        '200':
+          description: Every dependency answers.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+        '503':
+          description: A dependency does not answer.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: The share's admin token, returned by `POST /share`.
+
+  parameters:
+    Identifier:
+      name: identifier
+      in: path
+      required: true
+      description: Case-sensitive.
+      schema:
+        type: string
+
+  headers:
+    NoStore:
+      schema:
+        type: string
+        const: no-store
+    RetryAfter:
+      description: Seconds until the client IP may try again.
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+
+  responses:
+    BadRequest:
+      description: The body is not JSON, or not of the expected shape.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Unauthorized:
+      description: No Bearer token.
+      headers:
+        WWW-Authenticate:
+          required: true
+          schema:
+            type: string
+            const: Bearer
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Forbidden:
+      description: Wrong admin token.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotFound:
+      description: No share with this identifier.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    UnprocessableContent:
+      description: A field is missing or out of bounds.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    TooManyRequests:
+      description: Rate limit reached for this client IP.
+      headers:
+        Retry-After:
+          $ref: '#/components/headers/RetryAfter'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+  schemas:
+    Problem:
+      description: RFC 9457 problem details.
+      type: object
+      required: [title, status]
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+
+    SharedInfo:
+      description: |
+        A sealed address and what derives its key from the passphrase.
+
+        `salt` and `sealed` are base64 on the apps' side, but the server treats them
+        as opaque strings and returns them byte for byte as they were sent.
+      type: object
+      required: [iterations, salt, sealed]
+      properties:
+        iterations:
+          description: PBKDF2 iterations. The apps use 1000.
+          type: integer
+          minimum: 1
+          maximum: 1000000
+        salt:
+          type: string
+          minLength: 1
+          maxLength: 255
+        sealed:
+          description: A 16-byte nonce, then the AES-GCM ciphertext and its tag.
+          type: string
+          minLength: 1
+          maxLength: 16384
+
+    ShareCreated:
+      type: object
+      required: [identifier, admin_token]
+      properties:
+        identifier:
+          description: Base62, case-sensitive.
+          type: string
+        admin_token:
+          description: Returned only here. Required to replace or delete the share.
+          type: string
+
+    Liveness:
+      type: object
+      required: [status, version]
+      properties:
+        status:
+          type: string
+          const: ok
+        version:
+          description: The deployed commit SHA, or `dev` outside a release folder.
+          type: string
+
+    Health:
+      type: object
+      required: [status, checks]
+      properties:
+        status:
+          $ref: '#/components/schemas/HealthStatus'
+        checks:
+          description: One entry per dependency, such as `database`.
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/HealthStatus'
+
+    HealthStatus:
+      description: |
+        `ok` or `fail`. A plain string rather than an enum, so that clients accept
+        any value added later: Kotlin's generator cannot decode an open enum written
+        as `anyOf`.
+      type: string
+      examples: [ok, fail]
