@@ -11,7 +11,7 @@ struct HealthTests {
     /// It must answer even when the database does not: rolling back cannot fix an outage.
     @Test
     func livezAnswersWhateverTheDatabase() async throws {
-        try await testRouter(service: APIService(isDatabaseReachable: { false })) { client in
+        try await testRouter(databaseReachable: false) { client in
             try await client.execute(uri: "/livez", method: .get) { response in
                 #expect(response.status == .ok)
                 #expect(response.headers[.cacheControl] == "no-store")
@@ -22,7 +22,7 @@ struct HealthTests {
 
     @Test
     func healthzReportsTheDatabase() async throws {
-        try await testRouter(service: APIService(isDatabaseReachable: { true })) { client in
+        try await testRouter(databaseReachable: true) { client in
             try await client.execute(uri: "/healthz", method: .get) { response in
                 #expect(response.status == .ok)
                 #expect(response.headers[.cacheControl] == "no-store")
@@ -33,7 +33,7 @@ struct HealthTests {
 
     @Test
     func healthzFailsWhenTheDatabaseDoesNotAnswer() async throws {
-        try await testRouter(service: APIService(isDatabaseReachable: { false })) { client in
+        try await testRouter(databaseReachable: false) { client in
             try await client.execute(uri: "/healthz", method: .get) { response in
                 #expect(response.status == .serviceUnavailable)
                 #expect(response.headers[.cacheControl] == "no-store")
