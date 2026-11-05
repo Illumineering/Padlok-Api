@@ -1,0 +1,67 @@
+name: Client
+
+# The Swift client the apps import: lint it, check that the committed code is what
+# openapi.yaml generates, and test it.
+
+on:
+  push:
+    branches: [main, dev]
+    paths:
+      - openapi.yaml
+      - Package.swift
+      - Sources/**
+      - Tests/**
+      - Tools/Generator/**
+      - scripts/generate-client
+      - .swift-format
+      - .github/workflows/client.yml
+  pull_request:
+    paths:
+      - openapi.yaml
+      - Package.swift
+      - Sources/**
+      - Tests/**
+      - Tools/Generator/**
+      - scripts/generate-client
+      - .swift-format
+      - .github/workflows/client.yml
+  workflow_dispatch:
+
+# No job writes with the GITHUB_TOKEN.
+permissions: {}
+
+concurrency:
+  group: client-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  client:
+    name: Lint, check generated code, test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    container: swift:6.4-bookworm
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Lint
+        run: >
+          swift format lint --strict --recursive
+          Package.swift Sources/PadlokAPIClient/AdminToken.swift
+          Sources/PadlokAPIClient/PadlokAPIClient+Exported.swift
+          Tests Tools/Generator/Package.swift
+
+      - name: Generated client is current
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          scripts/generate-client
+          if [ -n "$(git status --porcelain -- Sources/PadlokAPIClient/Generated)" ]; then
+            git status --short -- Sources/PadlokAPIClient/Generated
+            echo "::error::Sources/PadlokAPIClient/Generated does not match openapi.yaml: run scripts/generate-client and commit the result."
+            exit 1
+          fi
+
+      - name: Test
+        run: swift test --parallel

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+#
+# Regenerates the client library, Sources/PadlokAPIClient/Generated, from openapi.yaml.
+# Run it after every change to the spec, and commit the result: CI fails when the
+# committed client does not match the spec.
+
+set -euo pipefail
+
+root=$(cd "$(dirname "$0")/.." && pwd)
+output="$root/Sources/PadlokAPIClient/Generated"
+
+# Starts empty, so a file the generator no longer writes does not linger.
+rm -rf "$output"
+mkdir -p "$output"
+
+swift run --quiet --package-path "$root/Tools/Generator" swift-openapi-generator generate \
+    --config "$root/Tools/Generator/client-config.yaml" \
+    --output-directory "$output" \
+    "$root/openapi.yaml"
