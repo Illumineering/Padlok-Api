@@ -1,0 +1,4 @@
+# Package.resolved is tracked: it pins what ships to strauss.
+
+# Release builds copied out of .build for deployment.
+/dist/

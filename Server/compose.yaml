@@ -1,0 +1,31 @@
+# Local development database: the MariaDB version strauss runs. Docker is for local
+# use only; production runs the MariaDB already installed on strauss. Port 3308, so it
+# clashes neither with a local MySQL nor with Latte's database on 3307.
+#
+#   docker compose up -d --wait
+#   PADLOK_TEST_DB_HOST=127.0.0.1 swift test     # database tests included
+#   swift run                                     # migrations apply at startup
+
+name: padlok
+
+services:
+  mariadb:
+    image: mariadb:10.11
+    environment:
+      MARIADB_ROOT_PASSWORD: padlok
+      MARIADB_DATABASE: padlok
+      MARIADB_USER: padlok
+      MARIADB_PASSWORD: padlok
+    ports:
+      - "127.0.0.1:3308:3306"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+      start_period: 5s
+    volumes:
+      - mariadb:/var/lib/mysql
+
+volumes:
+  mariadb:

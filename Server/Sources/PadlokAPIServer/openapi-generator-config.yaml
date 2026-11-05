@@ -1,0 +1,6 @@
+# The server stubs, generated at build time by the OpenAPIGenerator plugin.
+generate:
+  - types
+  - server
+accessModifier: public
+namingStrategy: idiomatic
