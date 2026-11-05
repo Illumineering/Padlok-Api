@@ -2,8 +2,8 @@
 
 import PackageDescription
 
-// The Padlok API server: Hummingbird 2 behind nginx on strauss. Built on Debian with
-// `swift build -c release --static-swift-stdlib`; see Infra/README.md.
+// The Padlok API server: Hummingbird 2, behind nginx. Built on Debian with
+// `swift build -c release --static-swift-stdlib` (.github/workflows/server.yml).
 //
 // A package of its own, so that the apps importing the client at the repository root
 // never resolve the server's dependencies.

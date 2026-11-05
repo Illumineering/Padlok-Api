@@ -1,0 +1,155 @@
+name: Server
+
+# Lint and test every change to the server, the spec or the client its tests use. On
+# dev and main, build a release and deploy it to strauss: dev to dev.padlok.app, main to
+# api.padlok.app.
+
+on:
+  push:
+    branches: [main, dev]
+    paths:
+      - openapi.yaml
+      - Package.swift
+      - Sources/**
+      - Server/**
+      - .swift-format
+      - .github/workflows/server.yml
+  pull_request:
+    paths:
+      - openapi.yaml
+      - Package.swift
+      - Sources/**
+      - Server/**
+      - .swift-format
+      - .github/workflows/server.yml
+  workflow_dispatch:
+
+# No job writes with the GITHUB_TOKEN.
+permissions: {}
+
+concurrency:
+  group: server-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Lint, test and build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    # Same Swift as Xcode, on the Debian release strauss runs. One job for tests and the
+    # release build, so the image, the checkout and the cache are paid for once.
+    container: swift:6.4-bookworm
+    # The MariaDB version strauss runs, for the database tests.
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_ROOT_PASSWORD: padlok
+        options: >-
+          --health-cmd "healthcheck.sh --connect --innodb_initialized"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          # Full history, for the modification times below.
+          fetch-depth: 0
+
+      # Checkout stamps every file with the current time, which makes SwiftPM rebuild
+      # all of our own sources. Giving each file its last commit's date lets the cached
+      # .build below skip whatever has not changed since.
+      - name: Restore modification times
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git ls-files -z Server Sources openapi.yaml | while IFS= read -r -d '' file; do
+            touch -d "$(git log -1 --format=%cI -- "$file")" "$file"
+          done
+
+      # One cache per commit, restored from the closest earlier one. Debug and release
+      # each get their own scratch path: sharing one, each build invalidates the other's.
+      - uses: actions/cache@v6
+        with:
+          path: |
+            Server/.build/debug-scratch
+            Server/.build/release-scratch
+          key: server-scratch-${{ github.sha }}
+          restore-keys: server-scratch-
+
+      - name: Lint
+        run: swift format lint --strict --recursive Server/Package.swift Server/Sources Server/Tests
+
+      - name: Test
+        env:
+          PADLOK_TEST_DB_HOST: mariadb
+          PADLOK_TEST_DB_PORT: 3306
+        run: swift test --package-path Server --scratch-path Server/.build/debug-scratch --parallel
+
+      - name: Build release
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
+        run: |
+          flags="--package-path Server --scratch-path Server/.build/release-scratch"
+          flags="$flags -c release --static-swift-stdlib --product Server"
+          swift build $flags
+          mkdir dist
+          cp "$(swift build $flags --show-bin-path)/Server" dist/
+          # Release builds carry DWARF, about a third of the binary. Dropping it keeps
+          # the symbols, so crash backtraces still name functions, just not lines.
+          llvm-objcopy --strip-debug dist/Server
+
+      - uses: actions/upload-artifact@v7
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
+        with:
+          name: server
+          path: dist/Server
+          retention-days: 7
+          if-no-files-found: error
+
+  deploy:
+    name: Deploy to ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+    needs: build
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'develop' }}
+    # Never cancel a deploy halfway; queue the next one instead.
+    concurrency:
+      group: deploy-${{ github.ref }}
+      cancel-in-progress: false
+    env:
+      PADLOK_ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+      DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: server
+          path: dist
+
+      - name: Configure SSH
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/deploy
+          chmod 600 ~/.ssh/deploy
+          # Pinned, so a spoofed host cannot receive the binary.
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          cat > ~/.ssh/config <<EOF
+          Host strauss
+            HostName $DEPLOY_HOST
+            Port $DEPLOY_PORT
+            User $DEPLOY_USER
+            IdentityFile ~/.ssh/deploy
+            IdentitiesOnly yes
+          EOF
+
+      - name: Upload
+        run: |
+          # Artifacts lose the executable bit.
+          chmod 755 dist/Server
+          rsync -az dist/ "strauss:/opt/padlok/$PADLOK_ENVIRONMENT/releases/$GITHUB_SHA/"
+
+      - name: Activate
+        run: ssh strauss /opt/padlok/bin/padlok-activate "$PADLOK_ENVIRONMENT" "$GITHUB_SHA"
